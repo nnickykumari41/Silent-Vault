@@ -80,10 +80,10 @@ The frontend was cleaned up so it feels like a SilentVault product instead of a 
 
 - Hero copy now focuses on the core promise: encrypted recovery for crypto that should not disappear with the owner.
 - The phone image reference was removed because the image asset is no longer part of the app.
-- The homepage no longer renders the old property-style cards such as `Family Legacy Vault`, `Property Highlights`, `Vault fee`, or `Open Flow`.
+- The homepage no longer renders the old property-style demo cards from the starter template.
 - Header and footer links now point to the active `#protocol` section.
 - Dashboard copy now starts with `Create, check in, unlock.` and avoids noisy zero-state counters before wallet connection.
-- The old `silentvault-theta.vercel.app` alias was removed. Use `https://silentvault-recovery.vercel.app`.
+- The previous generated Vercel alias was removed. Use `https://silentvault-recovery.vercel.app`.
 
 ## Project Structure
 

@@ -3,8 +3,6 @@ import { useEffect, useState } from "react"
 import { ArrowRight, ArrowUpRight } from "lucide-react"
 import { AnimatedText } from "./animated-text"
 
-const proofPoints = ["CoFHE encrypted", "Sepolia live", "Beneficiary unlock"]
-
 export function HeroSection() {
   const [isVisible, setIsVisible] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
@@ -94,32 +92,12 @@ export function HeroSection() {
               <AnimatedText text="Your crypto should not disappear with you" delay={0.3} />
             </h1>
           </div>
-          <p
-            className={`mx-auto max-w-2xl px-4 text-base leading-7 text-white/85 transition-all duration-1000 delay-[1000ms] md:text-lg ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-            }`}
-          >
-            Create an encrypted recovery vault, keep checking in while you are active, and release access only after
-            inactivity or an owner-triggered emergency.
-          </p>
         </div>
 
-        <div className="flex flex-col items-center justify-center gap-7">
-          <div
-            className={`flex flex-wrap items-center justify-center gap-2 transition-all duration-[1500ms] ease-out delay-500 ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            }`}
-          >
-            {proofPoints.map((point) => (
-              <span key={point} className="rounded-full border border-white/25 bg-white/10 px-4 py-2 text-xs font-medium text-white backdrop-blur-md">
-                {point}
-              </span>
-            ))}
-          </div>
-
+        <div className="flex flex-col items-center justify-center">
           <a
             href="/dashboard"
-            className={`relative flex items-center gap-0 bg-white text-black rounded-full pl-6 pr-1.5 py-1.5 transition-all duration-[1500ms] ease-out delay-700 group overflow-hidden hover:bg-white/95 ${
+            className={`relative flex items-center gap-0 bg-white text-black rounded-full pl-6 pr-1.5 py-1.5 transition-all duration-[1500ms] ease-out delay-500 group overflow-hidden hover:bg-white/95 ${
               isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
             }`}
           >
