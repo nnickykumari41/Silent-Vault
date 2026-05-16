@@ -1,0 +1,24 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "next-env.d.ts",
+    "app/**/*.ts",
+    "app/**/*.tsx",
+    "components/**/*.ts",
+    "components/**/*.tsx",
+    "contracts/**/*.ts",
+    "hooks/**/*.ts",
+    "hooks/**/*.tsx",
+    "lib/**/*.ts",
+    "scripts/**/*.ts",
+    "test/**/*.ts",
+    "hardhat.config.ts",
+    "typechain-types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    "artifacts",
+    "cache"
+  ]
+}

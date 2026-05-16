@@ -1,0 +1,803 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "ABITest",
+  "sourceName": "@cofhe/mock-contracts/contracts/ABITest.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "int32",
+          "name": "value",
+          "type": "int32"
+        }
+      ],
+      "name": "SecurityZoneOutOfBounds",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "euint8",
+          "name": "",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "euint16",
+          "name": "",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "euint32",
+          "name": "",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "euint64",
+          "name": "",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "euint128",
+          "name": "",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "ebool",
+          "name": "",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "eaddress",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "AllEncrypted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "value",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "euint32",
+          "name": "encryptedValue",
+          "type": "bytes32"
+        }
+      ],
+      "name": "BlendedValue",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "euint32[]",
+          "name": "value",
+          "type": "bytes32[]"
+        }
+      ],
+      "name": "EncryptedArray",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            },
+            {
+              "internalType": "euint32",
+              "name": "encryptedResult",
+              "type": "bytes32"
+            }
+          ],
+          "indexed": false,
+          "internalType": "struct ABITest.ContainsEncryptedResult",
+          "name": "value",
+          "type": "tuple"
+        }
+      ],
+      "name": "EncryptedStruct",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "euint32",
+          "name": "value",
+          "type": "bytes32"
+        }
+      ],
+      "name": "EncryptedValue",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint8",
+          "name": "value",
+          "type": "uint8"
+        }
+      ],
+      "name": "EventNoEncryptedInputs",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "eAddress",
+      "outputs": [
+        {
+          "internalType": "eaddress",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "eBool",
+      "outputs": [
+        {
+          "internalType": "ebool",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "eNumber",
+      "outputs": [
+        {
+          "internalType": "euint32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "eUint128",
+      "outputs": [
+        {
+          "internalType": "euint128",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "eUint16",
+      "outputs": [
+        {
+          "internalType": "euint16",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "eUint32",
+      "outputs": [
+        {
+          "internalType": "euint32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "eUint64",
+      "outputs": [
+        {
+          "internalType": "euint64",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "eUint8",
+      "outputs": [
+        {
+          "internalType": "euint8",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "ctHash",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint8",
+              "name": "securityZone",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "utype",
+              "type": "uint8"
+            },
+            {
+              "internalType": "bytes",
+              "name": "signature",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct InEuint8",
+          "name": "inEuint8",
+          "type": "tuple"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "ctHash",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint8",
+              "name": "securityZone",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "utype",
+              "type": "uint8"
+            },
+            {
+              "internalType": "bytes",
+              "name": "signature",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct InEuint16",
+          "name": "inEuint16",
+          "type": "tuple"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "ctHash",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint8",
+              "name": "securityZone",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "utype",
+              "type": "uint8"
+            },
+            {
+              "internalType": "bytes",
+              "name": "signature",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct InEuint32",
+          "name": "inEuint32",
+          "type": "tuple"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "ctHash",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint8",
+              "name": "securityZone",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "utype",
+              "type": "uint8"
+            },
+            {
+              "internalType": "bytes",
+              "name": "signature",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct InEuint64",
+          "name": "inEuint64",
+          "type": "tuple"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "ctHash",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint8",
+              "name": "securityZone",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "utype",
+              "type": "uint8"
+            },
+            {
+              "internalType": "bytes",
+              "name": "signature",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct InEuint128",
+          "name": "inEuint128",
+          "type": "tuple"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "ctHash",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint8",
+              "name": "securityZone",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "utype",
+              "type": "uint8"
+            },
+            {
+              "internalType": "bytes",
+              "name": "signature",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct InEbool",
+          "name": "inEbool",
+          "type": "tuple"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "ctHash",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint8",
+              "name": "securityZone",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "utype",
+              "type": "uint8"
+            },
+            {
+              "internalType": "bytes",
+              "name": "signature",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct InEaddress",
+          "name": "inEaddress",
+          "type": "tuple"
+        }
+      ],
+      "name": "fnAllEncryptedInputs",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "ctHash",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint8",
+              "name": "securityZone",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "utype",
+              "type": "uint8"
+            },
+            {
+              "internalType": "bytes",
+              "name": "signature",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct InEuint32[]",
+          "name": "inEuint32Array",
+          "type": "tuple[]"
+        }
+      ],
+      "name": "fnArrayContainsEncryptedInput",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "value",
+          "type": "uint256"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "ctHash",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint8",
+              "name": "securityZone",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "utype",
+              "type": "uint8"
+            },
+            {
+              "internalType": "bytes",
+              "name": "signature",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct InEuint32",
+          "name": "inNumber",
+          "type": "tuple"
+        }
+      ],
+      "name": "fnBlendedInputsIncludingEncryptedInput",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "ctHash",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint8",
+              "name": "securityZone",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "utype",
+              "type": "uint8"
+            },
+            {
+              "internalType": "bytes",
+              "name": "signature",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct InEuint32",
+          "name": "inNumber",
+          "type": "tuple"
+        }
+      ],
+      "name": "fnEncryptedInput",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint8",
+          "name": "value",
+          "type": "uint8"
+        }
+      ],
+      "name": "fnNoEncryptedInputs",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "fnReturnAllEncrypted",
+      "outputs": [
+        {
+          "internalType": "euint8",
+          "name": "",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint16",
+          "name": "",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint32",
+          "name": "",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint64",
+          "name": "",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint128",
+          "name": "",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "ebool",
+          "name": "",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "eaddress",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "fnReturnBlendedIncludingEncrypted",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "euint32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "fnReturnEncrypted",
+      "outputs": [
+        {
+          "internalType": "euint32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "fnReturnEncryptedArray",
+      "outputs": [
+        {
+          "internalType": "euint32[]",
+          "name": "",
+          "type": "bytes32[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "fnReturnEncryptedStruct",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            },
+            {
+              "internalType": "euint32",
+              "name": "encryptedResult",
+              "type": "bytes32"
+            }
+          ],
+          "internalType": "struct ABITest.ContainsEncryptedResult",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "fnReturnNoEncrypted",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint256",
+                  "name": "ctHash",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "securityZone",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "utype",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "bytes",
+                  "name": "signature",
+                  "type": "bytes"
+                }
+              ],
+              "internalType": "struct InEuint32",
+              "name": "encryptedInput",
+              "type": "tuple"
+            }
+          ],
+          "internalType": "struct ABITest.ContainsEncryptedInput",
+          "name": "containsEncryptedInput",
+          "type": "tuple"
+        }
+      ],
+      "name": "fnStructContainsEncryptedInput",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "ctHash",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint8",
+              "name": "securityZone",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "utype",
+              "type": "uint8"
+            },
+            {
+              "internalType": "bytes",
+              "name": "signature",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct InEuint32[2]",
+          "name": "inEuint32Array",
+          "type": "tuple[2]"
+        }
+      ],
+      "name": "fnTupleContainsEncryptedInput",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "numberHash",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x6080604052346105075760206040516100188282610631565b5f81525f36813760809060405161002f8382610631565b6003815283610099601f19850193843684860137600161004e8561069b565b52600261005a856106bc565b525f610065856106cc565b526100ab6040519485938493631888debd60e01b855260026004860152601a60248601528960448601526084850190610668565b83810360031901606485015290610668565b03815f5f516020610eab5f395f51905f525af1908115610512575f91610604575b506002556040516100dd8482610631565b5f81525f36813783610099604051926100f68685610631565b60038452843684860137600161010b8561069b565b526003610117856106bc565b525f610122856106cc565b526101566040519485938493631888debd60e01b855260036004860152601a60248601528960448601526084850190610668565b03815f5f516020610eab5f395f51905f525af1908115610512575f916105d7575b506003556040516101888482610631565b5f81525f36813783610099604051926101a18685610631565b6003845284368486013760016101b68561069b565b5260046101c2856106bc565b525f6101cd856106cc565b526102006040519485938493631888debd60e01b8552600480860152601a60248601528960448601526084850190610668565b03815f5f516020610eab5f395f51905f525af1908115610512575f916105aa575b506004556040516102328482610631565b5f81525f368137836100996040519261024b8685610631565b6003845284368486013760016102608561069b565b52600561026c856106bc565b525f610277856106cc565b526102ab6040519485938493631888debd60e01b855260056004860152601a60248601528960448601526084850190610668565b03815f5f516020610eab5f395f51905f525af1908115610512575f9161057d575b506005556040516102dd8482610631565b5f81525f36813783610099604051926102f68685610631565b60038452843684860137600161030b8561069b565b526006610317856106bc565b525f610322856106cc565b526103566040519485938493631888debd60e01b855260066004860152601a60248601528960448601526084850190610668565b03815f5f516020610eab5f395f51905f525af1908115610512575f91610550575b50600655604051906103898483610631565b5f82525f36813783610099604051936103a28686610631565b6003855283368487013760016103b78661069b565b525f6103c2866106bc565b525f6103cd866106cc565b526104006040519586938493631888debd60e01b85525f6004860152601a60248601528960448601526084850190610668565b03815f5f516020610eab5f395f51905f525af180156105125784925f9161051d575b506007556040516100999390916104ac9061043d8585610631565b5f84525f368137604051906104528483610631565b6003825236868301375f6104658261069b565b526007610471826106bc565b525f61047c826106cc565b526040519586948594631888debd60e01b865260076004870152601a602487015260448601526084850190610668565b03815f5f516020610eab5f395f51905f525af1918215610512575f926104e0575b826008556040516107ce90816106dd8239f35b90809250813d831161050b575b6104f78183610631565b8101031261050757515f806104cd565b5f80fd5b503d6104ed565b6040513d5f823e3d90fd5b83819492503d8311610549575b6105348183610631565b81010312610507579051839190610099610422565b503d61052a565b90508381813d8311610576575b6105678183610631565b8101031261050757515f610377565b503d61055d565b90508381813d83116105a3575b6105948183610631565b8101031261050757515f6102cc565b503d61058a565b90508381813d83116105d0575b6105c18183610631565b8101031261050757515f610221565b503d6105b7565b90508381813d83116105fd575b6105ee8183610631565b8101031261050757515f610177565b503d6105e4565b90508381813d831161062a575b61061b8183610631565b8101031261050757515f6100cc565b503d610611565b601f909101601f19168101906001600160401b0382119082101761065457604052565b634e487b7160e01b5f52604160045260245ffd5b90602080835192838152019201905f5b8181106106855750505090565b8251845260209384019390920191600101610678565b8051156106a85760200190565b634e487b7160e01b5f52603260045260245ffd5b8051600110156106a85760400190565b8051600210156106a8576060019056fe60806040526004361015610011575f80fd5b5f3560e01c806239d5191461063757806319d8a05b1461061b5780631e14b889146105cb57806336fd2482146105ae5780633b4590ec146105235780634e0016e61461050857806351ab3a4f146104eb578063573f2eea1461043457806367c65174146104175780636fef8bf0146103fa5780638389e4c5146103ca5780638a1abb6b146103b15780638ad203db146103475780638f1ca5c614610324578063915c71aa1461028057806396fb577b14610307578063aef4b934146102ea578063bce26123146102cd578063ce3221151461029d578063cfb9db6c14610280578063e0881d82146102005763fe7cb08d1461010a575f80fd5b346101fc5760e03660031901126101fc576004356001600160401b0381116101fc5761013a9036906004016106df565b506024356001600160401b0381116101fc5761015a9036906004016106df565b506044356001600160401b0381116101fc5761017a9036906004016106df565b506064356001600160401b0381116101fc5761019a9036906004016106df565b506084356001600160401b0381116101fc576101ba9036906004016106df565b5060a4356001600160401b0381116101fc576101da9036906004016106df565b5060c4356001600160401b0381116101fc576101fa9036906004016106df565b005b5f80fd5b346101fc5760203660031901126101fc576004356001600160401b0381116101fc57366023820112156101fc5761023561067d565b9060448101903682116101fc5780600401925b82841061025157005b83356001600160401b0381116101fc576020916102758392600436918701016106df565b815201930192610248565b346101fc575f3660031901126101fc576020600454604051908152f35b346101fc5760403660031901126101fc576024356001600160401b0381116101fc576101fa9036906004016106df565b346101fc575f3660031901126101fc576020600554604051908152f35b346101fc575f3660031901126101fc576020600654604051908152f35b346101fc575f3660031901126101fc576020600354604051908152f35b346101fc575f3660031901126101fc576040600454815190600182526020820152f35b346101fc5760203660031901126101fc576004356001600160401b0381116101fc57604060031982360301126101fc5761037f61067d565b908060040135825260248101356001600160401b0381116101fc5760209160046103ac92369201016106df565b910152005b346101fc5760203660031901126101fc576101fa6106c1565b346101fc5760203660031901126101fc576004356001600160401b0381116101fc576101fa9036906004016106df565b346101fc575f3660031901126101fc576020600754604051908152f35b346101fc575f3660031901126101fc576020600154604051908152f35b346101fc5760203660031901126101fc576004356001600160401b0381116101fc57366023820112156101fc578060040135906001600160401b0382116104d757602460208360051b9361048982860161069c565b9081520192820101903682116101fc5760248101925b8284106104a857005b83356001600160401b0381116101fc576020916104cc8392602436918701016106df565b81520193019261049f565b634e487b7160e01b5f52604160045260245ffd5b346101fc575f3660031901126101fc576020600854604051908152f35b346101fc575f3660031901126101fc57602060405160018152f35b346101fc575f3660031901126101fc5761053d604061069c565b6001815260208082019036823760045482511561059a5781929152604051918291602083019060208452518091526040830191905f5b818110610581575050500390f35b8251845285945060209384019390920191600101610573565b634e487b7160e01b5f52603260045260245ffd5b346101fc575f3660031901126101fc576020600254604051908152f35b346101fc575f3660031901126101fc5760e0600254600354600454600554600654906007549260085494604051968752602087015260408601526060850152608084015260a083015260c0820152f35b346101fc575f3660031901126101fc5760205f54604051908152f35b346101fc575f3660031901126101fc575f602061065261067d565b82815201526040600454602061066661067d565b600181520190815281519060018252516020820152f35b60405190604082018281106001600160401b038211176104d757604052565b6040519190601f01601f191682016001600160401b038111838210176104d757604052565b6004359060ff821682036101fc57565b359060ff821682036101fc57565b91906080838203126101fc57604051608081018181106001600160401b038211176104d757604052809380358252610719602082016106d1565b602083015261072a604082016106d1565b60408301526060810135906001600160401b0382116101fc57019082601f830112156101fc5781356001600160401b0381116104d757610773601f8201601f191660200161069c565b93818552602082850101116101fc576020815f9282606096018388013785010152015256fea264697066735822122076844737576a55750835467ab71352ecf22d7940ee34e534e6308d9acfdb34a564736f6c634300081c0033000000000000000000000000ea30c4b8b44078bbf8a6ef5b9f1ec1626c7848d9",
+  "deployedBytecode": "0x60806040526004361015610011575f80fd5b5f3560e01c806239d5191461063757806319d8a05b1461061b5780631e14b889146105cb57806336fd2482146105ae5780633b4590ec146105235780634e0016e61461050857806351ab3a4f146104eb578063573f2eea1461043457806367c65174146104175780636fef8bf0146103fa5780638389e4c5146103ca5780638a1abb6b146103b15780638ad203db146103475780638f1ca5c614610324578063915c71aa1461028057806396fb577b14610307578063aef4b934146102ea578063bce26123146102cd578063ce3221151461029d578063cfb9db6c14610280578063e0881d82146102005763fe7cb08d1461010a575f80fd5b346101fc5760e03660031901126101fc576004356001600160401b0381116101fc5761013a9036906004016106df565b506024356001600160401b0381116101fc5761015a9036906004016106df565b506044356001600160401b0381116101fc5761017a9036906004016106df565b506064356001600160401b0381116101fc5761019a9036906004016106df565b506084356001600160401b0381116101fc576101ba9036906004016106df565b5060a4356001600160401b0381116101fc576101da9036906004016106df565b5060c4356001600160401b0381116101fc576101fa9036906004016106df565b005b5f80fd5b346101fc5760203660031901126101fc576004356001600160401b0381116101fc57366023820112156101fc5761023561067d565b9060448101903682116101fc5780600401925b82841061025157005b83356001600160401b0381116101fc576020916102758392600436918701016106df565b815201930192610248565b346101fc575f3660031901126101fc576020600454604051908152f35b346101fc5760403660031901126101fc576024356001600160401b0381116101fc576101fa9036906004016106df565b346101fc575f3660031901126101fc576020600554604051908152f35b346101fc575f3660031901126101fc576020600654604051908152f35b346101fc575f3660031901126101fc576020600354604051908152f35b346101fc575f3660031901126101fc576040600454815190600182526020820152f35b346101fc5760203660031901126101fc576004356001600160401b0381116101fc57604060031982360301126101fc5761037f61067d565b908060040135825260248101356001600160401b0381116101fc5760209160046103ac92369201016106df565b910152005b346101fc5760203660031901126101fc576101fa6106c1565b346101fc5760203660031901126101fc576004356001600160401b0381116101fc576101fa9036906004016106df565b346101fc575f3660031901126101fc576020600754604051908152f35b346101fc575f3660031901126101fc576020600154604051908152f35b346101fc5760203660031901126101fc576004356001600160401b0381116101fc57366023820112156101fc578060040135906001600160401b0382116104d757602460208360051b9361048982860161069c565b9081520192820101903682116101fc5760248101925b8284106104a857005b83356001600160401b0381116101fc576020916104cc8392602436918701016106df565b81520193019261049f565b634e487b7160e01b5f52604160045260245ffd5b346101fc575f3660031901126101fc576020600854604051908152f35b346101fc575f3660031901126101fc57602060405160018152f35b346101fc575f3660031901126101fc5761053d604061069c565b6001815260208082019036823760045482511561059a5781929152604051918291602083019060208452518091526040830191905f5b818110610581575050500390f35b8251845285945060209384019390920191600101610573565b634e487b7160e01b5f52603260045260245ffd5b346101fc575f3660031901126101fc576020600254604051908152f35b346101fc575f3660031901126101fc5760e0600254600354600454600554600654906007549260085494604051968752602087015260408601526060850152608084015260a083015260c0820152f35b346101fc575f3660031901126101fc5760205f54604051908152f35b346101fc575f3660031901126101fc575f602061065261067d565b82815201526040600454602061066661067d565b600181520190815281519060018252516020820152f35b60405190604082018281106001600160401b038211176104d757604052565b6040519190601f01601f191682016001600160401b038111838210176104d757604052565b6004359060ff821682036101fc57565b359060ff821682036101fc57565b91906080838203126101fc57604051608081018181106001600160401b038211176104d757604052809380358252610719602082016106d1565b602083015261072a604082016106d1565b60408301526060810135906001600160401b0382116101fc57019082601f830112156101fc5781356001600160401b0381116104d757610773601f8201601f191660200161069c565b93818552602082850101116101fc576020815f9282606096018388013785010152015256fea264697066735822122076844737576a55750835467ab71352ecf22d7940ee34e534e6308d9acfdb34a564736f6c634300081c0033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
