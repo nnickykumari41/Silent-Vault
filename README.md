@@ -4,7 +4,9 @@ SilentVault is a privacy-preserving crypto inheritance and emergency recovery ap
 
 The main idea is simple: your recovery instructions, private asset notes, release code, and beneficiary metadata should not be visible before the right moment. SilentVault uses CoFHE/Fhenix encrypted handles and on-chain access control so beneficiaries can only decrypt after the vault is unlocked.
 
-Live app: https://silentvault-theta.vercel.app
+Live app: https://silentvault-recovery.vercel.app
+
+Production alias: `silentvault-recovery.vercel.app`
 
 Sepolia contract: `0x899dE425976B0618a77D9Fd1195d33442955BeFF`
 
@@ -67,7 +69,21 @@ Implemented:
 - Local browser decryption after unlock.
 - Hardhat tests for the core contract flow.
 - Sepolia smoke script that creates, unlocks, and decrypts a real test vault.
-- Production deployment on Vercel.
+- Production deployment on Vercel with the clean public alias `silentvault-recovery.vercel.app`.
+- Cleaned landing page that preserves the template hero animation while removing the old phone mockup dependency.
+- Removed unused property/demo carousel sections from the homepage.
+- Simplified dashboard intro copy and wallet status area.
+
+## Latest Frontend Update
+
+The frontend was cleaned up so it feels like a SilentVault product instead of a renamed template.
+
+- Hero copy now focuses on the core promise: encrypted recovery for crypto that should not disappear with the owner.
+- The phone image reference was removed because the image asset is no longer part of the app.
+- The homepage no longer renders the old property-style cards such as `Family Legacy Vault`, `Property Highlights`, `Vault fee`, or `Open Flow`.
+- Header and footer links now point to the active `#protocol` section.
+- Dashboard copy now starts with `Create, check in, unlock.` and avoids noisy zero-state counters before wallet connection.
+- The old `silentvault-theta.vercel.app` alias was removed. Use `https://silentvault-recovery.vercel.app`.
 
 ## Project Structure
 
@@ -124,7 +140,7 @@ npm run smoke:sepolia
 
 The smoke test creates a real vault on Sepolia, starts recovery, unlocks it, grants access, and decrypts the CoFHE handles.
 
-## Wave 5 -  Next Build
+## Wave 5 - Missing Features And Next Build
 
 These are the main issues and missing features found after reviewing the current app, contract, and deployment state.
 
