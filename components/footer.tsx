@@ -6,7 +6,7 @@ const footerLinks = {
   product: [
     { label: "Dashboard", href: "/dashboard" },
     { label: "Create vault", href: "/dashboard" },
-    { label: "Protocol", href: "#pricing" },
+    { label: "Protocol", href: "#protocol" },
     { label: "FAQ", href: "#faq" },
   ],
   company: [

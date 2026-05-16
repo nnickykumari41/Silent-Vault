@@ -72,8 +72,8 @@ export function Header() {
               Features
             </a>
             <a
-              href="#pricing"
-              onClick={(e) => handleSmoothScroll(e, "pricing")}
+              href="#protocol"
+              onClick={(e) => handleSmoothScroll(e, "protocol")}
               className={`text-sm transition-colors cursor-pointer ${
                 isScrolled ? "text-zinc-600 hover:text-black" : "text-muted-foreground hover:text-foreground"
               }`}
@@ -167,8 +167,8 @@ export function Header() {
               Features
             </a>
             <a
-              href="#pricing"
-              onClick={(e) => handleSmoothScroll(e, "pricing")}
+              href="#protocol"
+              onClick={(e) => handleSmoothScroll(e, "protocol")}
               className={`transition-colors cursor-pointer ${
                 isScrolled ? "text-zinc-600 hover:text-black" : "text-muted-foreground hover:text-foreground"
               }`}

@@ -111,7 +111,7 @@ export function ServicesSection() {
           <div className="absolute inset-0 w-full h-full">
             <img
               src="/images/7aecbceb-cbd3-4cbd-901c-dd0125d41525.png"
-              alt="Beautiful house"
+              alt="Quiet landscape for private legacy planning"
               className={`w-full h-full object-cover transition-transform duration-1000 ease-out ${
                 isVisible ? "scale-100" : "scale-110"
               }`}
