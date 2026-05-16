@@ -13,13 +13,14 @@ export function AnimatedText({ text, delay = 0 }: AnimatedTextProps) {
 
   return (
     <motion.span
-      className="font-bold text-center text-5xl leading-[0.92] tracking-normal font-serif text-black sm:text-6xl md:text-7xl lg:text-8xl"
+      aria-label={text}
+      className="font-bold text-center text-5xl leading-[0.92] tracking-normal font-serif text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.28)] sm:text-6xl md:text-7xl lg:text-8xl"
       initial="hidden"
       animate="visible"
       style={{ perspective: 400, display: "inline-block" }}
     >
       {words.map((word, wordIndex) => (
-        <span key={wordIndex} style={{ display: "inline-block", whiteSpace: "nowrap" }}>
+        <span key={wordIndex} aria-hidden="true" style={{ display: "inline-block", whiteSpace: "nowrap" }}>
           {word.split("").map((char, index) => {
             const currentIndex = charIndex++
             return (
