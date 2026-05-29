@@ -1061,74 +1061,10 @@ export function SilentVaultDashboard({ activeView = "overview" }: { activeView?:
       </section>
 
       <section className="px-4 py-10">
-        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.82fr_1.18fr]">
-          <div className="space-y-6">
-            <div className="border-b border-zinc-200 pb-8">
-              <p className="mb-4 text-sm uppercase tracking-[0.24em] text-zinc-500">Encrypted recovery console</p>
-              <h1 className="font-serif text-5xl font-normal leading-tight md:text-7xl">Create, check in, unlock.</h1>
-              <p className="mt-6 max-w-xl text-base leading-7 text-zinc-600">
-                Manage the complete on-chain flow from one place: encrypted vault setup, owner heartbeat, beneficiary
-                recovery, emergency mode, and local decrypt after unlock.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 border-b border-zinc-200 pb-6 md:grid-cols-4">
-              <Metric icon={LockKeyhole} label="Owner vaults" value={account ? String(ownedVaults.length) : "--"} />
-              <Metric icon={Users} label="Heir vaults" value={account ? String(beneficiaryVaults.length) : "--"} />
-              <Metric icon={Radio} label="Network" value={activeChain.shortName} />
-              <Metric icon={Database} label="Events" value={account ? String(events.length) : "--"} />
-            </div>
-
-            <div className="border-b border-zinc-200 pb-6">
-              <div className="flex items-start gap-3">
-                {isBusy ? (
-                  <Loader2 className="mt-1 h-5 w-5 animate-spin text-zinc-500" />
-                ) : (
-                  <CheckCircle2 className="mt-1 h-5 w-5 text-emerald-600" />
-                )}
-                <div>
-                  <p className="text-sm font-medium text-zinc-900">Wallet and chain status</p>
-                  <p className="mt-1 text-sm leading-6 text-zinc-600">{status}</p>
-                  {lastTx && (
-                    <a
-                      href={explorerTx(lastTx)}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="mt-3 inline-flex text-sm font-medium text-zinc-950 underline underline-offset-4"
-                    >
-                      View latest transaction
-                    </a>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="border-b border-zinc-200 pb-6">
-              <div className="grid gap-3 text-sm">
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-zinc-500">Chain ID</span>
-                  <span className="font-medium text-zinc-900">{activeChain.id}</span>
-                </div>
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-zinc-500">Contract</span>
-                  {silentVaultAddress ? (
-                    <a
-                      href={explorerAddress(silentVaultAddress)}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="font-mono text-xs font-medium text-zinc-950 underline underline-offset-4"
-                    >
-                      {shortAddress(silentVaultAddress)}
-                    </a>
-                  ) : (
-                    <span className="text-amber-600">Missing</span>
-                  )}
-                </div>
-              </div>
-            </div>
-
-                {hiddenClaimSummary.length > 0 && (
-              <div className="border-b border-zinc-200 pb-6">
+        <div className="mx-auto max-w-7xl">
+          <div className="rounded-[30px] border border-zinc-200 bg-white p-3 shadow-sm">
+            {hiddenClaimSummary.length > 0 && (
+              <div className="border-b border-zinc-100 p-3 md:p-5">
                 <div className="mb-2 flex items-center justify-between gap-3">
                   <p className="text-sm font-medium text-zinc-900">Hidden claim salts</p>
                   <button
@@ -1140,22 +1076,19 @@ export function SilentVaultDashboard({ activeView = "overview" }: { activeView?:
                 </div>
                 <div className="space-y-2">
                   {hiddenClaimSummary.map((claim) => (
-                    <p key={claim} className="break-all rounded-2xl bg-white p-3 font-mono text-xs text-zinc-600">
+                    <p key={claim} className="break-all rounded-2xl bg-[#f8f8f6] p-3 font-mono text-xs text-zinc-600">
                       {claim}
                     </p>
                   ))}
                 </div>
               </div>
             )}
-          </div>
 
-          <div className="rounded-[30px] border border-zinc-200 bg-white p-3 shadow-sm">
-            <div className="grid grid-cols-2 gap-2 p-1 md:grid-cols-4">
+            <div className="grid gap-2 p-1 sm:grid-cols-3">
               {[
                 ["overview", "Dashboard", "/dashboard"],
                 ["create", "Create vault", "/dashboard/create"],
                 ["beneficiary", "Beneficiary", "/dashboard/beneficiary"],
-                ["roadmap", "Roadmap", "/dashboard/roadmap"],
               ].map(([id, title, href]) => (
                 <Link
                   key={id}
