@@ -10,7 +10,6 @@ import {
   CalendarClock,
   Copy,
   EyeOff,
-  ExternalLink,
   FileArchive,
   FileCheck2,
   FileText,
@@ -44,7 +43,6 @@ import {
 } from "viem"
 import {
   activeChain,
-  explorerAddress,
   explorerTx,
   hasContractAddress,
   silentVaultAbi,
@@ -292,7 +290,7 @@ export function SilentVaultDashboard({ activeView = "overview" }: { activeView?:
   const [decrypted, setDecrypted] = useState<Record<string, DecryptedVault>>({})
   const [wave5Ready, setWave5Ready] = useState(true)
   const [isBusy, setIsBusy] = useState(false)
-  const [, setStatus] = useState("Connect a wallet to create or manage a private recovery vault.")
+  const [, setStatus] = useState("")
   const [, setLastTx] = useState<string>()
   const [label, setLabel] = useState("Family recovery vault")
   const [assetCount, setAssetCount] = useState(7)
@@ -1025,29 +1023,6 @@ export function SilentVaultDashboard({ activeView = "overview" }: { activeView?:
             </div>
           </a>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full border border-zinc-200 bg-white px-3 py-2 text-xs text-zinc-600">
-              {activeChain.shortName}
-            </span>
-            {contractReady ? (
-              <a
-                href={explorerAddress(silentVaultAddress || "")}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-700"
-              >
-                Contract configured
-                <ExternalLink className="h-3 w-3" />
-              </a>
-            ) : (
-              <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-700">
-                Contract address missing
-              </span>
-            )}
-            {contractReady && !wave5Ready && (
-              <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-700">
-                Legacy contract
-              </span>
-            )}
             <button
               onClick={connectWallet}
               disabled={isBusy}
