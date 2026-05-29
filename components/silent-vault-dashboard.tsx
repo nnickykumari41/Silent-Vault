@@ -8,9 +8,7 @@ import {
   Ban,
   Bell,
   CalendarClock,
-  CheckCircle2,
   Copy,
-  Database,
   EyeOff,
   ExternalLink,
   FileArchive,
@@ -22,7 +20,6 @@ import {
   Loader2,
   LockKeyhole,
   Play,
-  Radio,
   RefreshCw,
   Shield,
   Timer,
@@ -137,7 +134,7 @@ type CofheRuntime = {
   FheTypes: any
 }
 
-type SilentVaultView = "overview" | "create" | "beneficiary" | "roadmap"
+type SilentVaultView = "overview" | "create" | "beneficiary"
 type VaultWriteAction =
   | "checkIn"
   | "startRecovery"
@@ -153,9 +150,7 @@ export function SilentVaultDashboardRouter() {
     ? "create"
     : pathname.endsWith("/beneficiary")
       ? "beneficiary"
-      : pathname.endsWith("/roadmap")
-        ? "roadmap"
-        : "overview"
+      : "overview"
 
   return <SilentVaultDashboard activeView={activeView} />
 }
