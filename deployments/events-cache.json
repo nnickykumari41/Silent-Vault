@@ -1,8 +1,66 @@
 {
   "network": "eth-sepolia",
   "address": "0xa472cF48636bDB9C5B0cBA550eA368d71f7C35cD",
-  "indexedAt": "2026-05-28T12:09:09.258Z",
+  "indexedAt": "2026-05-29T13:17:23.918Z",
   "events": [
+    {
+      "event": "VaultUnlocked",
+      "blockNumber": 10947420,
+      "transactionHash": "0x37875be2d8e91697f8427321ffbf86ff2f1b933d7cf19ad56a69f80e36b589cc",
+      "logIndex": 179,
+      "args": {
+        "vaultId": "2",
+        "actor": "0xB3A78E23993cc416DF79c8E954e427Ef15063b20"
+      }
+    },
+    {
+      "event": "RecoveryApproved",
+      "blockNumber": 10947419,
+      "transactionHash": "0x8d98337d9e81ef151ec528e26e46a5b971946d57976268d8c074c784ecc1bb8c",
+      "logIndex": 502,
+      "args": {
+        "vaultId": "2",
+        "actor": "0xB3A78E23993cc416DF79c8E954e427Ef15063b20",
+        "approvals": "1",
+        "threshold": "1"
+      }
+    },
+    {
+      "event": "RecoveryStarted",
+      "blockNumber": 10947419,
+      "transactionHash": "0x8d98337d9e81ef151ec528e26e46a5b971946d57976268d8c074c784ecc1bb8c",
+      "logIndex": 501,
+      "args": {
+        "vaultId": "2",
+        "actor": "0xB3A78E23993cc416DF79c8E954e427Ef15063b20",
+        "unlocksAt": "1780060596",
+        "emergencyMode": false
+      }
+    },
+    {
+      "event": "VaultMetadataUpdated",
+      "blockNumber": 10947418,
+      "transactionHash": "0x1a5d8e4e03be4a1a33a6a404850c4b66eb0dbb6884fcc4952d81ae15d97a4f32",
+      "logIndex": 874,
+      "args": {
+        "vaultId": "2",
+        "payloadHash": "0xae41d94f9e9a9dd82c092d7410fecf168a3722a797d38a600255ec9f42e70c7f",
+        "externalPayloadHash": "0x94000292da351b65df9305027c7bcf6ee66cd1850cf21f2f578801466807f164",
+        "notificationHash": "0x875f810ffa780a557aa2d55714e3d81267a03d791c41ceee084fa2dedca786c2",
+        "proofOfLifeHash": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "event": "VaultCreated",
+      "blockNumber": 10947418,
+      "transactionHash": "0x1a5d8e4e03be4a1a33a6a404850c4b66eb0dbb6884fcc4952d81ae15d97a4f32",
+      "logIndex": 873,
+      "args": {
+        "vaultId": "2",
+        "owner": "0xB3A78E23993cc416DF79c8E954e427Ef15063b20",
+        "payloadHash": "0xae41d94f9e9a9dd82c092d7410fecf168a3722a797d38a600255ec9f42e70c7f"
+      }
+    },
     {
       "event": "VaultUnlocked",
       "blockNumber": 10939970,

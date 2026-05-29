@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import {
@@ -290,8 +290,8 @@ export function SilentVaultDashboard({ activeView = "overview" }: { activeView?:
   const [decrypted, setDecrypted] = useState<Record<string, DecryptedVault>>({})
   const [wave5Ready, setWave5Ready] = useState(true)
   const [isBusy, setIsBusy] = useState(false)
-  const [, setStatus] = useState("")
-  const [, setLastTx] = useState<string>()
+  const [status, setStatus] = useState("")
+  const [lastTx, setLastTx] = useState<string>()
   const [label, setLabel] = useState("Family recovery vault")
   const [assetCount, setAssetCount] = useState(7)
   const [timerIndex, setTimerIndex] = useState(0)
@@ -302,6 +302,7 @@ export function SilentVaultDashboard({ activeView = "overview" }: { activeView?:
   const [secret, setSecret] = useState(initialSecret)
   const [externalPayloadCid, setExternalPayloadCid] = useState("")
   const [externalPayloadHash, setExternalPayloadHash] = useState("")
+  const [isUploadingExternalFile, setIsUploadingExternalFile] = useState(false)
   const [notificationEmail, setNotificationEmail] = useState("")
   const [notificationTelegram, setNotificationTelegram] = useState("")
   const [notificationWebhook, setNotificationWebhook] = useState("")
@@ -1009,6 +1010,34 @@ export function SilentVaultDashboard({ activeView = "overview" }: { activeView?:
     }
   }
 
+  async function uploadExternalPayload(file?: File) {
+    if (!file) return
+    setIsUploadingExternalFile(true)
+    try {
+      setStatus("Hashing encrypted file locally...")
+      const fileHash = await sha256Bytes32(file)
+      setExternalPayloadHash(fileHash)
+
+      setStatus("Uploading encrypted file to IPFS...")
+      const formData = new FormData()
+      formData.append("file", file)
+
+      const response = await fetch("/api/pinata/upload", {
+        method: "POST",
+        body: formData,
+      })
+      const result = await response.json().catch(() => ({}))
+      if (!response.ok) throw new Error(result?.error || "Could not upload encrypted file to IPFS.")
+
+      setExternalPayloadCid(result.ipfsUri || `ipfs://${result.cid}`)
+      setStatus("Encrypted file pinned to IPFS and hash anchor is ready.")
+    } catch (error: any) {
+      setStatus(error?.message || "Could not upload encrypted file.")
+    } finally {
+      setIsUploadingExternalFile(false)
+    }
+  }
+
   return (
     <main className="min-h-screen bg-[#f8f8f6] text-zinc-950">
       <section className="border-b border-zinc-200 bg-white/80 px-4 py-4 backdrop-blur-xl">
@@ -1056,6 +1085,31 @@ export function SilentVaultDashboard({ activeView = "overview" }: { activeView?:
                     </p>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {(status || lastTx) && (
+              <div className="mx-1 mb-2 flex flex-col gap-3 rounded-2xl border border-zinc-100 bg-[#fbfbfa] px-4 py-3 text-sm text-zinc-600 sm:flex-row sm:items-center sm:justify-between">
+                {status && (
+                  <div className="flex items-center gap-2">
+                    {isBusy || isUploadingExternalFile ? (
+                      <Loader2 className="h-4 w-4 animate-spin text-zinc-500" />
+                    ) : (
+                      <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                    )}
+                    <span>{status}</span>
+                  </div>
+                )}
+                {lastTx && (
+                  <a
+                    href={explorerTx(lastTx)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-sm font-medium text-zinc-950 underline underline-offset-4"
+                  >
+                    View transaction
+                  </a>
+                )}
               </div>
             )}
 
@@ -1110,109 +1164,115 @@ export function SilentVaultDashboard({ activeView = "overview" }: { activeView?:
             )}
 
             {activeView === "create" && (
-              <div className="space-y-5 p-3 md:p-5">
-                <div className="border-b border-zinc-100 pb-5">
-                  <h2 className="font-serif text-3xl font-normal">Create vault</h2>
-                  <p className="mt-1 text-sm text-zinc-500">
-                    The encrypted payload and FHE handles are written directly to the contract.
-                  </p>
-                </div>
-
-                <div className="grid gap-4 md:grid-cols-2">
-                  <label className="space-y-2">
-                    <span className="text-sm font-medium text-zinc-700">Vault label</span>
-                    <input
-                      value={label}
-                      onChange={(event) => setLabel(event.target.value)}
-                      className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-zinc-500"
-                    />
-                  </label>
-                  <label className="space-y-2">
-                    <span className="text-sm font-medium text-zinc-700">Private asset count</span>
-                    <input
-                      type="number"
-                      min={1}
-                      value={assetCount}
-                      onChange={(event) => setAssetCount(Number(event.target.value))}
-                      className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-zinc-500"
-                    />
-                  </label>
-                </div>
-
-                <label className="space-y-2">
-                  <span className="text-sm font-medium text-zinc-700">Unlock condition</span>
-                  <select
-                    value={timerIndex}
-                    onChange={(event) => setTimerIndex(Number(event.target.value))}
-                    className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-zinc-500"
-                  >
-                    {timerPresets.map((preset, index) => (
-                      <option key={preset.label} value={index}>
-                        {preset.label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-
-                <label className="space-y-2">
-                  <span className="text-sm font-medium text-zinc-700">Recovery approvals required</span>
-                  <input
-                    type="number"
-                    min={1}
-                    max={Math.max(1, beneficiaries.length)}
-                    value={approvalThreshold}
-                    onChange={(event) => setApprovalThreshold(Number(event.target.value))}
-                    className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-zinc-500"
-                  />
-                  <span className="block text-xs text-zinc-500">
-                    {approvalThreshold} of {beneficiaries.length} beneficiary slots must approve before non-emergency unlock.
+              <div className="space-y-6 p-3 md:p-5">
+                <div className="flex flex-col gap-3 border-b border-zinc-100 pb-5 md:flex-row md:items-end md:justify-between">
+                  <div>
+                    <h2 className="font-serif text-3xl font-normal">Create vault</h2>
+                    <p className="mt-1 text-sm text-zinc-500">Build the recovery policy, encrypt it, then write it on-chain.</p>
+                  </div>
+                  <span className="w-fit rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-600">
+                    {shareTotal}% allocated
                   </span>
-                </label>
+                </div>
 
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-zinc-700">Beneficiaries</span>
+                <FormSection title="Vault details" description="Set the label, unlock timing, and beneficiary approval policy.">
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <label className="space-y-2">
+                      <span className="text-sm font-medium text-zinc-700">Vault label</span>
+                      <input
+                        value={label}
+                        onChange={(event) => setLabel(event.target.value)}
+                        className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-zinc-500"
+                      />
+                    </label>
+                    <label className="space-y-2">
+                      <span className="text-sm font-medium text-zinc-700">Private asset count</span>
+                      <input
+                        type="number"
+                        min={1}
+                        value={assetCount}
+                        onChange={(event) => setAssetCount(Number(event.target.value))}
+                        className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-zinc-500"
+                      />
+                    </label>
+                    <label className="space-y-2">
+                      <span className="text-sm font-medium text-zinc-700">Unlock condition</span>
+                      <select
+                        value={timerIndex}
+                        onChange={(event) => setTimerIndex(Number(event.target.value))}
+                        className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-zinc-500"
+                      >
+                        {timerPresets.map((preset, index) => (
+                          <option key={preset.label} value={index}>
+                            {preset.label}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <label className="space-y-2">
+                      <span className="text-sm font-medium text-zinc-700">Recovery approvals required</span>
+                      <input
+                        type="number"
+                        min={1}
+                        max={Math.max(1, beneficiaries.length)}
+                        value={approvalThreshold}
+                        onChange={(event) => setApprovalThreshold(Number(event.target.value))}
+                        className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-zinc-500"
+                      />
+                      <span className="block text-xs text-zinc-500">
+                        {approvalThreshold} of {beneficiaries.length} beneficiary slots must approve before unlock.
+                      </span>
+                    </label>
+                  </div>
+                </FormSection>
+
+                <FormSection
+                  title="Beneficiaries"
+                  description="Add public or hidden heirs and keep the distribution at exactly 100%."
+                  action={
                     <button onClick={addBeneficiary} className="text-sm font-medium text-zinc-950 underline underline-offset-4">
                       Add heir
                     </button>
-                  </div>
+                  }
+                >
+                  <div className="space-y-3">
                   {beneficiaries.map((beneficiary, index) => (
-                    <div key={index} className="rounded-3xl border border-zinc-200 bg-[#fbfbfa] p-3">
+                    <div key={index} className="rounded-2xl border border-zinc-200 bg-[#fbfbfa] p-3">
                       <div className="grid gap-3 md:grid-cols-[1fr_110px_120px_42px]">
-                      <input
-                        value={beneficiary.wallet}
-                        onChange={(event) => updateBeneficiary(index, "wallet", event.target.value)}
-                        placeholder="0x beneficiary wallet"
-                        aria-label={`Beneficiary ${index + 1} wallet`}
-                        className="rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-zinc-500"
-                      />
-                      <input
-                        type="number"
-                        min={0}
-                        max={100}
-                        value={beneficiary.share}
-                        onChange={(event) => updateBeneficiary(index, "share", event.target.value)}
-                        aria-label={`Beneficiary ${index + 1} share percentage`}
-                        className="rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-zinc-500"
-                      />
-                      <label className="flex items-center justify-center gap-2 rounded-2xl border border-zinc-200 bg-white px-3 py-3 text-sm text-zinc-700">
                         <input
-                          type="checkbox"
-                          checked={beneficiary.hidden}
-                          onChange={(event) => toggleBeneficiaryHidden(index, event.target.checked)}
-                          className="h-4 w-4"
+                          value={beneficiary.wallet}
+                          onChange={(event) => updateBeneficiary(index, "wallet", event.target.value)}
+                          placeholder="0x beneficiary wallet"
+                          aria-label={`Beneficiary ${index + 1} wallet`}
+                          className="rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-zinc-500"
                         />
-                        Hidden
-                      </label>
-                      <button
-                        onClick={() => removeBeneficiary(index)}
-                        disabled={beneficiaries.length === 1}
-                        className="flex h-12 items-center justify-center rounded-full border border-zinc-200 text-zinc-500 transition hover:bg-zinc-50 disabled:opacity-40"
-                        aria-label={`Remove beneficiary ${index + 1}`}
-                        title="Remove beneficiary"
-                      >
-                        <Ban className="h-4 w-4" />
-                      </button>
+                        <input
+                          type="number"
+                          min={0}
+                          max={100}
+                          value={beneficiary.share}
+                          onChange={(event) => updateBeneficiary(index, "share", event.target.value)}
+                          aria-label={`Beneficiary ${index + 1} share percentage`}
+                          className="rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-zinc-500"
+                        />
+                        <label className="flex items-center justify-center gap-2 rounded-2xl border border-zinc-200 bg-white px-3 py-3 text-sm text-zinc-700">
+                          <input
+                            type="checkbox"
+                            checked={beneficiary.hidden}
+                            onChange={(event) => toggleBeneficiaryHidden(index, event.target.checked)}
+                            className="h-4 w-4"
+                          />
+                          Hidden
+                        </label>
+                        <button
+                          onClick={() => removeBeneficiary(index)}
+                          disabled={beneficiaries.length === 1}
+                          className="flex h-12 items-center justify-center rounded-full border border-zinc-200 text-zinc-500 transition hover:bg-zinc-50 disabled:opacity-40"
+                          aria-label={`Remove beneficiary ${index + 1}`}
+                          title="Remove beneficiary"
+                        >
+                          <Ban className="h-4 w-4" />
+                        </button>
                       </div>
                       {beneficiary.hidden && (
                         <div className="mt-3 grid gap-2 md:grid-cols-[1fr_42px]">
@@ -1237,10 +1297,10 @@ export function SilentVaultDashboard({ activeView = "overview" }: { activeView?:
                   <p className={`text-sm ${shareTotalBps === 10000 ? "text-emerald-600" : "text-amber-600"}`}>
                     Distribution total: {shareTotal}%
                   </p>
-                </div>
+                  </div>
+                </FormSection>
 
-                <div className="space-y-2">
-                  <span className="text-sm font-medium text-zinc-700">Secret recovery package</span>
+                <FormSection title="Recovery package" description="Use templates for structure, then add the private instructions.">
                   <div className="flex flex-wrap gap-2">
                     {recoveryTemplates.map((template) => (
                       <button
@@ -1258,79 +1318,99 @@ export function SilentVaultDashboard({ activeView = "overview" }: { activeView?:
                     rows={8}
                     className="w-full resize-none rounded-3xl border border-zinc-200 bg-white px-4 py-4 text-sm leading-6 outline-none transition focus:border-zinc-500"
                   />
-                </div>
+                </FormSection>
 
-                <div className="grid gap-4 rounded-3xl border border-zinc-200 bg-[#fbfbfa] p-4 md:grid-cols-2">
-                  <label className="space-y-2">
-                    <span className="text-sm font-medium text-zinc-700">Encrypted file CID</span>
-                    <input
-                      value={externalPayloadCid}
-                      onChange={(event) => setExternalPayloadCid(event.target.value)}
-                      placeholder="ipfs:// or lighthouse cid"
-                      className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-zinc-500"
-                    />
-                  </label>
-                  <label className="space-y-2">
-                    <span className="text-sm font-medium text-zinc-700">File hash anchor</span>
-                    <input
-                      value={externalPayloadHash}
-                      onChange={(event) => setExternalPayloadHash(event.target.value)}
-                      placeholder={zeroBytes32}
-                      className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 font-mono text-xs outline-none transition focus:border-zinc-500"
-                    />
-                  </label>
-                  <label className="md:col-span-2">
-                    <span className="flex items-center gap-2 rounded-2xl border border-dashed border-zinc-300 bg-white px-4 py-4 text-sm font-medium text-zinc-700">
-                      <FileArchive className="h-4 w-4" />
-                      Hash a local file before uploading
+                <FormSection
+                  title="Encrypted file anchor"
+                  description="Optional. Upload only files that are already encrypted, or hash a local file without uploading it."
+                >
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <label className="space-y-2">
+                      <span className="text-sm font-medium text-zinc-700">Encrypted file CID</span>
                       <input
-                        type="file"
-                        className="sr-only"
-                        onChange={(event) => hashExternalPayload(event.target.files?.[0])}
+                        value={externalPayloadCid}
+                        onChange={(event) => setExternalPayloadCid(event.target.value)}
+                        placeholder="ipfs://..."
+                        className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-zinc-500"
                       />
-                    </span>
-                  </label>
-                </div>
+                    </label>
+                    <label className="space-y-2">
+                      <span className="text-sm font-medium text-zinc-700">File hash anchor</span>
+                      <input
+                        value={externalPayloadHash}
+                        onChange={(event) => setExternalPayloadHash(event.target.value)}
+                        placeholder={zeroBytes32}
+                        className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 font-mono text-xs outline-none transition focus:border-zinc-500"
+                      />
+                    </label>
+                  </div>
+                  <div className="grid gap-3 md:grid-cols-2">
+                    <label>
+                      <span className="flex min-h-14 items-center justify-center gap-2 rounded-2xl border border-zinc-200 bg-zinc-950 px-4 py-4 text-sm font-medium text-white transition hover:bg-zinc-800">
+                        {isUploadingExternalFile ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileArchive className="h-4 w-4" />}
+                        Upload encrypted file to IPFS
+                        <input
+                          type="file"
+                          className="sr-only"
+                          disabled={isUploadingExternalFile}
+                          onChange={(event) => uploadExternalPayload(event.target.files?.[0])}
+                        />
+                      </span>
+                    </label>
+                    <label>
+                      <span className="flex min-h-14 items-center justify-center gap-2 rounded-2xl border border-dashed border-zinc-300 bg-white px-4 py-4 text-sm font-medium text-zinc-700 transition hover:border-zinc-400">
+                        <FileCheck2 className="h-4 w-4" />
+                        Hash only
+                        <input
+                          type="file"
+                          className="sr-only"
+                          onChange={(event) => hashExternalPayload(event.target.files?.[0])}
+                        />
+                      </span>
+                    </label>
+                  </div>
+                </FormSection>
 
-                <div className="grid gap-4 rounded-3xl border border-zinc-200 bg-[#fbfbfa] p-4 md:grid-cols-3">
-                  <label className="space-y-2">
-                    <span className="text-sm font-medium text-zinc-700">Email alert</span>
-                    <input
-                      value={notificationEmail}
-                      onChange={(event) => setNotificationEmail(event.target.value)}
-                      placeholder="heir@example.com"
-                      className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-zinc-500"
-                    />
-                  </label>
-                  <label className="space-y-2">
-                    <span className="text-sm font-medium text-zinc-700">Telegram chat</span>
-                    <input
-                      value={notificationTelegram}
-                      onChange={(event) => setNotificationTelegram(event.target.value)}
-                      placeholder="@handle or chat id"
-                      className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-zinc-500"
-                    />
-                  </label>
-                  <label className="space-y-2">
-                    <span className="text-sm font-medium text-zinc-700">Webhook</span>
-                    <input
-                      value={notificationWebhook}
-                      onChange={(event) => setNotificationWebhook(event.target.value)}
-                      placeholder="https://..."
-                      className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-zinc-500"
-                    />
-                  </label>
-                </div>
+                <FormSection title="Notifications" description="Optional off-chain destinations are hashed into the vault metadata.">
+                  <div className="grid gap-4 md:grid-cols-3">
+                    <label className="space-y-2">
+                      <span className="text-sm font-medium text-zinc-700">Email alert</span>
+                      <input
+                        value={notificationEmail}
+                        onChange={(event) => setNotificationEmail(event.target.value)}
+                        placeholder="heir@example.com"
+                        className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-zinc-500"
+                      />
+                    </label>
+                    <label className="space-y-2">
+                      <span className="text-sm font-medium text-zinc-700">Telegram chat</span>
+                      <input
+                        value={notificationTelegram}
+                        onChange={(event) => setNotificationTelegram(event.target.value)}
+                        placeholder="@handle or chat id"
+                        className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-zinc-500"
+                      />
+                    </label>
+                    <label className="space-y-2">
+                      <span className="text-sm font-medium text-zinc-700">Webhook</span>
+                      <input
+                        value={notificationWebhook}
+                        onChange={(event) => setNotificationWebhook(event.target.value)}
+                        placeholder="https://..."
+                        className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-zinc-500"
+                      />
+                    </label>
+                  </div>
+                </FormSection>
 
-                <label className="space-y-2">
-                  <span className="text-sm font-medium text-zinc-700">Proof-of-life plan</span>
+                <FormSection title="Proof-of-life plan" description="Write the check-in or verification plan beneficiaries should expect.">
                   <textarea
                     value={proofOfLifePlan}
                     onChange={(event) => setProofOfLifePlan(event.target.value)}
                     rows={3}
                     className="w-full resize-none rounded-3xl border border-zinc-200 bg-white px-4 py-4 text-sm leading-6 outline-none transition focus:border-zinc-500"
                   />
-                </label>
+                </FormSection>
 
                 <div className="rounded-3xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-900">
                   Never paste a seed phrase directly unless this vault is the final sealed place you intend to store it.
@@ -1397,6 +1477,31 @@ export function SilentVaultDashboard({ activeView = "overview" }: { activeView?:
         </div>
       </section>
     </main>
+  )
+}
+
+function FormSection({
+  title,
+  description,
+  action,
+  children,
+}: {
+  title: string
+  description?: string
+  action?: ReactNode
+  children: ReactNode
+}) {
+  return (
+    <section className="space-y-4 border-t border-zinc-100 pt-5">
+      <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+        <div>
+          <h3 className="text-sm font-semibold text-zinc-950">{title}</h3>
+          {description && <p className="mt-1 max-w-2xl text-sm leading-6 text-zinc-500">{description}</p>}
+        </div>
+        {action}
+      </div>
+      <div className="space-y-4">{children}</div>
+    </section>
   )
 }
 
