@@ -2,15 +2,17 @@
 
 SilentVault is a privacy-preserving crypto inheritance and emergency recovery app. It lets a wallet owner create an encrypted recovery vault that stays private until on-chain conditions are met, such as inactivity, a missed check-in window, or a manual emergency trigger.
 
-The main idea is simple: your recovery instructions, private asset notes, release code, and beneficiary metadata should not be visible before the right moment. SilentVault uses CoFHE/Fhenix encrypted handles and on-chain access control so beneficiaries can only decrypt after the vault is unlocked.
+The main idea is simple: your recovery instructions, private asset notes, release secret, and beneficiary metadata should not be visible before the right moment. SilentVault uses CoFHE/Fhenix encrypted handles and on-chain access control so beneficiaries can only decrypt after the vault is unlocked.
 
 Live app: https://silentvault-recovery.vercel.app
 
 Production alias: `silentvault-recovery.vercel.app`
 
-Sepolia contract: `0x899dE425976B0618a77D9Fd1195d33442955BeFF`
+Sepolia contract: `0xa472cF48636bDB9C5B0cBA550eA368d71f7C35cD`
 
-Explorer: https://sepolia.etherscan.io/address/0x899dE425976B0618a77D9Fd1195d33442955BeFF
+Explorer: https://sepolia.etherscan.io/address/0xa472cF48636bDB9C5B0cBA550eA368d71f7C35cD
+
+Sourcify verification: https://repo.sourcify.dev/contracts/full_match/11155111/0xa472cF48636bDB9C5B0cBA550eA368d71f7C35cD/
 
 ## What The App Does
 
@@ -58,13 +60,21 @@ Implemented:
   - `/dashboard/roadmap`
 - Wallet connection through an injected browser wallet.
 - CoFHE client initialization.
-- Vault creation with encrypted release code, encrypted asset count, encrypted primary beneficiary, and encrypted recovery note.
+- Vault creation with encrypted high-entropy release secret, encrypted asset count, encrypted primary beneficiary, and encrypted recovery note.
 - Multi-beneficiary shares, up to 8 beneficiaries.
 - Owner check-in.
 - Beneficiary recovery start.
 - Grace-period unlock.
 - Owner emergency trigger.
 - Owner recovery cancellation.
+- Optional M-of-N recovery approvals before beneficiary unlock.
+- Owner beneficiary rotation before release.
+- Hidden beneficiary commitments with claim-salt reveal and unrevealed commitment rotation.
+- External Lighthouse/IPFS CID and file-hash anchoring.
+- Notification relay hashes plus guarded email, Telegram, and webhook API route.
+- Browser event timeline and Hardhat event indexer script.
+- Proof-of-life plan hash anchoring.
+- Recovery package templates for wallet inventory, exchanges, legal contacts, and final instructions.
 - Post-unlock beneficiary access grant.
 - Local browser decryption after unlock.
 - Hardhat tests for the core contract flow.
@@ -122,7 +132,7 @@ http://localhost:3000
 Required frontend environment:
 
 ```bash
-NEXT_PUBLIC_SILENT_VAULT_ADDRESS=0x899dE425976B0618a77D9Fd1195d33442955BeFF
+NEXT_PUBLIC_SILENT_VAULT_ADDRESS=0xa472cF48636bDB9C5B0cBA550eA368d71f7C35cD
 NEXT_PUBLIC_CHAIN_ID=11155111
 NEXT_PUBLIC_RPC_URL=https://ethereum-sepolia-rpc.publicnode.com
 ```
@@ -140,27 +150,21 @@ npm run smoke:sepolia
 
 The smoke test creates a real vault on Sepolia, starts recovery, unlocks it, grants access, and decrypts the CoFHE handles.
 
-## Wave 5 - Missing Features And Next Build
+## Wave 5 - Production Readiness
 
-These are the main issues and missing features found after reviewing the current app, contract, and deployment state.
+Wave 5 turns SilentVault from an MVP into a fuller production candidate.
 
-- Notification relays: add email, Telegram, and wallet push alerts for missed check-ins, recovery start, grace-period warnings, and successful unlocks.
-- Event indexer: add an indexer or lightweight backend cache for vault events so dashboards do not depend only on direct RPC reads.
-- Beneficiary rotation: add an owner flow to replace a beneficiary wallet if an heir loses access or changes wallet.
-- Multi-sign recovery: support optional 2-of-N beneficiary, lawyer, trustee, or DAO approval before unlock.
-- Hidden beneficiaries: current beneficiary wallet list is public on-chain; add a stronger private-beneficiary mode where identities stay hidden until unlock.
-- Larger private files: integrate Lighthouse/IPFS or another encrypted storage layer for PDFs, legal docs, images, videos, and long recovery instructions, with hashes anchored on-chain.
-- Proof-of-life options: add optional wallet-activity checks, scheduled check-in reminders, and risk signals beyond manual check-in.
-- Legal and safety UX: add inheritance disclaimers, recovery phrase handling guidance, estate-planning notes, and safer copy around seed phrases.
-- Independent audit: run a third-party smart-contract audit and write a formal threat model covering false triggers, compromised owner wallet, beneficiary collusion, and lost beneficiary wallet.
-- Mainnet readiness: add a clear deployment matrix for CoFHE-supported chains, production RPC providers, monitoring, and contract verification.
-- Dependency hardening: track the remaining npm audit warnings from Hardhat/tooling dependencies and the latest Next.js bundled PostCSS advisory; migrate when upstream packages make safe upgrades available.
-- CI/CD: add GitHub-based lint, build, contract test, and smoke-test workflows before production deployments.
-- Preview environments: configure Vercel Preview env vars once the project is connected to a git branch.
-- Better wallet QA: add scripted browser-wallet E2E tests for create, check-in, start recovery, unlock, and decrypt flows.
-- Contract metadata in UI: show the active network, contract address, and explorer link inside the dashboard for easier user verification.
-- Recovery package templates: add guided templates for wallet inventory, exchange accounts, hardware-wallet location, legal contacts, and final instructions.
-- Account abstraction option: explore gas sponsorship or session keys for beneficiaries who may not have Sepolia/mainnet gas during recovery.
+- Multi-sign recovery: vault creators can require M-of-N beneficiary approvals before non-emergency unlock.
+- Beneficiary rotation: owners can replace unreleased beneficiary wallets; pending approvals are reset.
+- Hidden beneficiaries: owners can create salted commitment slots, rotate unrevealed commitments, and beneficiaries reveal only when they submit their claim salt.
+- Larger private files: the create flow anchors an encrypted file CID and SHA-256 hash while keeping large documents off-chain.
+- Notification relays: the vault stores a private notification config hash, and `/api/notifications` can relay email, Telegram, and webhook alerts when server credentials are configured.
+- Event indexer: the dashboard indexes contract events into browser cache, and `npm run index:events` can produce a deployment event cache.
+- Proof-of-life options: a proof-of-life plan hash is anchored with the vault metadata.
+- Legal and safety UX: the create flow includes recovery package templates and safer seed-phrase handling guidance.
+- Mainnet readiness: `DEPLOYMENT.md` documents the CoFHE-supported deployment matrix and preview/production env setup.
+- Security readiness: `SECURITY.md` documents the threat model and audit checklist.
+- CI/CD: `.github/workflows/ci.yml` runs compile, contract tests, lint, and build, with a manual Sepolia smoke-test job.
 
 ## Product Direction
 

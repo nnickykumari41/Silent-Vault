@@ -1,7 +1,8 @@
 type VaultPayload = {
-  version: 1
+  version: 1 | 2
   alg: "AES-GCM"
   kdf: "PBKDF2-SHA256"
+  salt?: string
   iv: string
   data: string
 }
@@ -22,7 +23,19 @@ function base64ToBytes(value: string) {
   return bytes
 }
 
-async function deriveVaultKey(releaseCode: string, owner: string, primaryBeneficiary: string) {
+function bytesToHex(bytes: Uint8Array) {
+  return `0x${Array.from(bytes)
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("")}`
+}
+
+function bytesToArrayBuffer(bytes: Uint8Array) {
+  const copy = new Uint8Array(bytes.byteLength)
+  copy.set(bytes)
+  return copy.buffer as ArrayBuffer
+}
+
+async function deriveVaultKey(releaseCode: string, owner: string, primaryBeneficiary: string, salt: Uint8Array) {
   const secretMaterial = await crypto.subtle.importKey(
     "raw",
     encoder.encode(`${releaseCode}:${owner.toLowerCase()}:${primaryBeneficiary.toLowerCase()}:silentvault-v1`),
@@ -34,8 +47,8 @@ async function deriveVaultKey(releaseCode: string, owner: string, primaryBenefic
   return crypto.subtle.deriveKey(
     {
       name: "PBKDF2",
-      salt: encoder.encode("silentvault-release-payload"),
-      iterations: 210_000,
+      salt: bytesToArrayBuffer(salt),
+      iterations: 600_000,
       hash: "SHA-256",
     },
     secretMaterial,
@@ -52,13 +65,15 @@ export async function encryptVaultPayload(
   primaryBeneficiary: string,
 ) {
   const iv = crypto.getRandomValues(new Uint8Array(12))
-  const key = await deriveVaultKey(releaseCode, owner, primaryBeneficiary)
+  const salt = crypto.getRandomValues(new Uint8Array(16))
+  const key = await deriveVaultKey(releaseCode, owner, primaryBeneficiary, salt)
   const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, encoder.encode(secret))
 
   const payload: VaultPayload = {
-    version: 1,
+    version: 2,
     alg: "AES-GCM",
     kdf: "PBKDF2-SHA256",
+    salt: bytesToBase64(salt),
     iv: bytesToBase64(iv),
     data: bytesToBase64(new Uint8Array(encrypted)),
   }
@@ -73,11 +88,12 @@ export async function decryptVaultPayload(
   primaryBeneficiary: string,
 ) {
   const payload = JSON.parse(encryptedPayload) as VaultPayload
-  if (payload.version !== 1 || payload.alg !== "AES-GCM") {
+  if ((payload.version !== 1 && payload.version !== 2) || payload.alg !== "AES-GCM") {
     throw new Error("Unsupported vault payload format")
   }
 
-  const key = await deriveVaultKey(releaseCode, owner, primaryBeneficiary)
+  const salt = payload.salt ? base64ToBytes(payload.salt) : encoder.encode("silentvault-release-payload")
+  const key = await deriveVaultKey(releaseCode, owner, primaryBeneficiary, salt)
   const decrypted = await crypto.subtle.decrypt(
     { name: "AES-GCM", iv: base64ToBytes(payload.iv) },
     key,
@@ -88,6 +104,20 @@ export async function decryptVaultPayload(
 }
 
 export function makeReleaseCode() {
-  const random = crypto.getRandomValues(new Uint32Array(1))[0]
-  return String(100000 + (random % 900000))
+  const bytes = crypto.getRandomValues(new Uint8Array(8))
+  bytes[0] = bytes[0] | 0x80
+  let value = 0n
+  for (const byte of bytes) {
+    value = (value << 8n) + BigInt(byte)
+  }
+  return value.toString()
+}
+
+export function makeBytes32Salt() {
+  return bytesToHex(crypto.getRandomValues(new Uint8Array(32)))
+}
+
+export async function sha256Bytes32(file: File) {
+  const digest = await crypto.subtle.digest("SHA-256", await file.arrayBuffer())
+  return bytesToHex(new Uint8Array(digest))
 }

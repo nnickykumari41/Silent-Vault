@@ -5,27 +5,27 @@ import Image from "next/image"
 const footerLinks = {
   product: [
     { label: "Dashboard", href: "/dashboard" },
-    { label: "Create vault", href: "/dashboard" },
+    { label: "Create vault", href: "/dashboard/create" },
     { label: "Protocol", href: "#protocol" },
     { label: "FAQ", href: "#faq" },
   ],
   company: [
-    { label: "About", href: "#" },
-    { label: "Roadmap", href: "/dashboard" },
-    { label: "Docs", href: "#" },
-    { label: "Demo", href: "/dashboard" },
+    { label: "About", href: "#how-it-works" },
+    { label: "Roadmap", href: "/dashboard/roadmap" },
+    { label: "Docs", href: "/dashboard/roadmap" },
+    { label: "Demo", href: "/dashboard/create" },
   ],
   legal: [
-    { label: "Terms", href: "#" },
-    { label: "Privacy", href: "#" },
-    { label: "Security", href: "#" },
-    { label: "Disclosures", href: "#" },
+    { label: "Terms", href: "/terms" },
+    { label: "Privacy", href: "/privacy" },
+    { label: "Security", href: "/security" },
+    { label: "Disclosures", href: "/security" },
   ],
   support: [
     { label: "Help Center", href: "#faq" },
     { label: "Contact", href: "#contact" },
     { label: "FAQ", href: "#faq" },
-    { label: "Report", href: "#" },
+    { label: "Report", href: "mailto:security@silentvault.app" },
   ],
 }
 

@@ -6,7 +6,7 @@ export function CTASection() {
     <section id="protocol" className="py-32 px-6 relative overflow-hidden">
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
         <span className="text-[20vw] font-bold font-sans tracking-tighter leading-none text-zinc-100 whitespace-nowrap">
-          SIMPLIFY
+          RECOVERY
         </span>
       </div>
 

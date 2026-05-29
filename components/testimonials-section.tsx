@@ -1,26 +1,22 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import Image from "next/image"
 
 const testimonials = [
   {
     name: "Maya I.",
     role: "Long-term ETH holder",
     content: "I can finally leave instructions without giving anyone access before they need it.",
-    avatar: "/placeholder.svg?height=48&width=48",
   },
   {
     name: "Dev K.",
     role: "Protocol founder",
     content: "The emergency mode and grace period make this feel practical, not just theoretical.",
-    avatar: "/placeholder.svg?height=48&width=48",
   },
   {
     name: "Anika S.",
     role: "Family office operator",
     content: "Encrypted instructions plus on-chain timing is the missing bridge for self-custody inheritance.",
-    avatar: "/placeholder.svg?height=48&width=48",
   },
 ]
 
@@ -29,19 +25,16 @@ const testimonials2 = [
     name: "Lucas P.",
     role: "Security reviewer",
     content: "The contract never receives plaintext recovery notes. That is the right default.",
-    avatar: "/placeholder.svg?height=48&width=48",
   },
   {
     name: "Emma L.",
     role: "DAO treasurer",
     content: "Beneficiary shares make it usable for teams, not only families.",
-    avatar: "/placeholder.svg?height=48&width=48",
   },
   {
     name: "Antoine R.",
     role: "Wallet power user",
     content: "The demo flow is clear: create, miss check-in, unlock, decrypt.",
-    avatar: "/placeholder.svg?height=48&width=48",
   },
 ]
 
@@ -147,13 +140,12 @@ export function TestimonialsSection() {
                   className="flex-shrink-0 w-full sm:w-[400px] bg-card border border-border rounded-2xl p-8 border-none py-4"
                 >
                   <div className="flex items-start gap-4 mb-6">
-                    <Image
-                      src={testimonial.avatar || "/placeholder.svg"}
-                      alt={testimonial.name}
-                      width={48}
-                      height={48}
-                      className="w-12 h-12 rounded-full object-cover"
-                    />
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-zinc-100 text-sm font-semibold text-zinc-700">
+                      {testimonial.name
+                        .split(" ")
+                        .map((part) => part[0])
+                        .join("")}
+                    </div>
                     <p className="text-foreground leading-relaxed flex-1 text-lg">
                       &ldquo;{testimonial.content}&rdquo;
                     </p>
@@ -187,13 +179,12 @@ export function TestimonialsSection() {
                   className="flex-shrink-0 w-full sm:w-[400px] bg-card border border-border rounded-2xl p-8 border-none py-4"
                 >
                   <div className="flex items-start gap-4 mb-6">
-                    <Image
-                      src={testimonial.avatar || "/placeholder.svg"}
-                      alt={testimonial.name}
-                      width={48}
-                      height={48}
-                      className="w-12 h-12 rounded-full object-cover"
-                    />
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-zinc-100 text-sm font-semibold text-zinc-700">
+                      {testimonial.name
+                        .split(" ")
+                        .map((part) => part[0])
+                        .join("")}
+                    </div>
                     <p className="text-lg text-foreground leading-relaxed flex-1">
                       &ldquo;{testimonial.content}&rdquo;
                     </p>

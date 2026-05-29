@@ -3,7 +3,7 @@
 ## Finished MVP
 
 - On-chain SilentVault contract
-- CoFHE encrypted release code
+- CoFHE encrypted high-entropy release secret
 - CoFHE encrypted private asset count
 - CoFHE encrypted primary beneficiary
 - Encrypted recovery package stored on-chain as ciphertext
@@ -19,19 +19,24 @@
 - Clean Vercel alias: `silentvault-recovery.vercel.app`
 - Removed leftover property-template cards and stale phone mockup dependency
 - Simplified hero and dashboard copy for the SilentVault flow
+- Wave 5 production contract extensions:
+  - Optional M-of-N recovery approvals
+  - Owner beneficiary rotation
+  - Hidden beneficiary commitments with claim-salt reveal and unrevealed commitment rotation
+  - External Lighthouse/IPFS CID and file-hash anchors
+  - Notification and proof-of-life metadata hashes
+- Browser event timeline and event indexer script
+- Guarded email, Telegram, and webhook notification relay endpoint
+- Recovery package templates and seed-phrase safety UX
+- Deployment runbook, threat model, audit checklist, and GitHub CI
 
 ## Production Hardening
 
 - Independent contract audit
-- Formal threat model for beneficiary collusion, false triggers, compromised owner wallet, and lost beneficiary wallet
-- Optional multisig unlock policy
-- Larger encrypted file mode with Lighthouse/IPFS plus on-chain content hashes
-- Email, Telegram, and wallet notifications for missed check-ins and grace periods
-- Rotation flow for beneficiary wallets
-- Owner recovery phrase export guidance and legal disclaimers
-- Event indexer for faster dashboard loading
-- Multi-chain deployment matrix for CoFHE-supported testnets/mainnets
-- Contract metadata panel inside the dashboard with network, contract address, and explorer link
+- Third-party review of the Wave 5 state machine
+- Production notification workers for scheduled missed-check-in and grace-period alerts
+- Production monitoring for failed CoFHE decrypt requests and RPC degradation
+- Mainnet deployment once CoFHE mainnet support is available
 - Full wallet browser E2E tests for create, check-in, recovery, unlock, and decrypt
 
 ## Business Expansion

@@ -1,0 +1,46 @@
+name: SilentVault CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+    inputs:
+      run_smoke:
+        description: Run Sepolia smoke test
+        required: false
+        default: "false"
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run compile
+      - run: npm run test:contracts
+      - run: npm run lint
+      - run: npm run build
+
+  sepolia-smoke:
+    if: github.event_name == 'workflow_dispatch' && inputs.run_smoke == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run smoke:sepolia
+        env:
+          PRIVATE_KEY: ${{ secrets.SEPOLIA_PRIVATE_KEY }}
+          SEPOLIA_RPC_URL: ${{ secrets.SEPOLIA_RPC_URL }}
+          NEXT_PUBLIC_SILENT_VAULT_ADDRESS: ${{ secrets.NEXT_PUBLIC_SILENT_VAULT_ADDRESS }}
+          NEXT_PUBLIC_CHAIN_ID: 11155111

@@ -7,7 +7,7 @@ import { RealtimePropertyCard } from "./realtime-property-card"
 
 const features = [
   "Create a vault in one transaction",
-  "Encrypt release codes with CoFHE",
+  "Encrypt release secrets with CoFHE",
   "Assign up to 8 beneficiaries",
   "Manual check-in heartbeat",
   "Emergency panic trigger",

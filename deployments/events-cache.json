@@ -1,0 +1,65 @@
+{
+  "network": "eth-sepolia",
+  "address": "0xa472cF48636bDB9C5B0cBA550eA368d71f7C35cD",
+  "indexedAt": "2026-05-28T12:09:09.258Z",
+  "events": [
+    {
+      "event": "VaultUnlocked",
+      "blockNumber": 10939970,
+      "transactionHash": "0x5eccea94d28b613989b8ad40b44803ba9f681a3c3483d72ae2a4f45a2d41f6e7",
+      "logIndex": 559,
+      "args": {
+        "vaultId": "1",
+        "actor": "0xB3A78E23993cc416DF79c8E954e427Ef15063b20"
+      }
+    },
+    {
+      "event": "RecoveryApproved",
+      "blockNumber": 10939969,
+      "transactionHash": "0xdf981fd1b2cd480ba7b61888f05b7bbd2d67bc92cef6b6f5ee7a4324ccda1976",
+      "logIndex": 414,
+      "args": {
+        "vaultId": "1",
+        "actor": "0xB3A78E23993cc416DF79c8E954e427Ef15063b20",
+        "approvals": "1",
+        "threshold": "1"
+      }
+    },
+    {
+      "event": "RecoveryStarted",
+      "blockNumber": 10939969,
+      "transactionHash": "0xdf981fd1b2cd480ba7b61888f05b7bbd2d67bc92cef6b6f5ee7a4324ccda1976",
+      "logIndex": 413,
+      "args": {
+        "vaultId": "1",
+        "actor": "0xB3A78E23993cc416DF79c8E954e427Ef15063b20",
+        "unlocksAt": "1779970068",
+        "emergencyMode": false
+      }
+    },
+    {
+      "event": "VaultMetadataUpdated",
+      "blockNumber": 10939968,
+      "transactionHash": "0xd31760b535cfdb51ea4157916eca8eacf692b99130fdec8b421edc3096eeb0e0",
+      "logIndex": 434,
+      "args": {
+        "vaultId": "1",
+        "payloadHash": "0xeb35417ba58943c0c48a67e35cc708dbe688142f53fbb0880290b3847aa14337",
+        "externalPayloadHash": "0x94000292da351b65df9305027c7bcf6ee66cd1850cf21f2f578801466807f164",
+        "notificationHash": "0x875f810ffa780a557aa2d55714e3d81267a03d791c41ceee084fa2dedca786c2",
+        "proofOfLifeHash": "0x0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "event": "VaultCreated",
+      "blockNumber": 10939968,
+      "transactionHash": "0xd31760b535cfdb51ea4157916eca8eacf692b99130fdec8b421edc3096eeb0e0",
+      "logIndex": 433,
+      "args": {
+        "vaultId": "1",
+        "owner": "0xB3A78E23993cc416DF79c8E954e427Ef15063b20",
+        "payloadHash": "0xeb35417ba58943c0c48a67e35cc708dbe688142f53fbb0880290b3847aa14337"
+      }
+    }
+  ]
+}

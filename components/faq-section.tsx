@@ -9,12 +9,12 @@ const faqs = [
   {
     question: "Can the contract read my secret?",
     answer:
-      "No. The long-form note is encrypted locally in the browser. The release code, asset count, and primary beneficiary are CoFHE encrypted state, so the contract controls access without learning the plaintext.",
+      "No. The long-form note is encrypted locally in the browser. The release secret, asset count, and primary beneficiary are CoFHE encrypted state, so the contract controls access without learning the plaintext.",
   },
   {
     question: "When can beneficiaries decrypt?",
     answer:
-      "Beneficiaries can start recovery only after the inactivity timer is ready. After the grace period, unlocking the vault grants them CoFHE ACL permission to decrypt the release code locally.",
+      "Beneficiaries can start recovery only after the inactivity timer is ready. After the grace period, unlocking the vault grants them CoFHE ACL permission to decrypt the release secret locally.",
   },
   {
     question: "Can the owner stop a false trigger?",

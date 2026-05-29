@@ -8,12 +8,13 @@ describe("SilentVault", () => {
     const [owner, heir, lawyer, stranger] = await hre.ethers.getSigners()
     const ownerClient = await hre.cofhe.createClientWithBatteries(owner)
     const heirClient = await hre.cofhe.createClientWithBatteries(heir)
+    const lawyerClient = await hre.cofhe.createClientWithBatteries(lawyer)
 
     const SilentVault = await hre.ethers.getContractFactory("SilentVault")
     const vault = await SilentVault.deploy()
     await vault.waitForDeployment()
 
-    return { vault, owner, heir, lawyer, stranger, ownerClient, heirClient }
+    return { vault, owner, heir, lawyer, stranger, ownerClient, heirClient, lawyerClient }
   }
 
   async function encryptedInputs(ownerClient: any, primaryBeneficiary: string) {
@@ -26,6 +27,17 @@ describe("SilentVault", () => {
       .execute()
 
     return { releaseCode, assetCount, sealedBeneficiary }
+  }
+
+  function metadata(payload: string) {
+    return {
+      encryptedPayload: payload,
+      payloadHash: hre.ethers.keccak256(hre.ethers.toUtf8Bytes(payload)),
+      externalPayloadCid: "ipfs://bafybeiguidedmanifest",
+      externalPayloadHash: hre.ethers.keccak256(hre.ethers.toUtf8Bytes("external-manifest")),
+      notificationHash: hre.ethers.keccak256(hre.ethers.toUtf8Bytes("email:telegram:wallet")),
+      proofOfLifeHash: hre.ethers.keccak256(hre.ethers.toUtf8Bytes("manual-checkin:wallet-activity")),
+    }
   }
 
   it("creates a fully on-chain encrypted vault and releases handles after unlock", async () => {
@@ -208,5 +220,194 @@ describe("SilentVault", () => {
     await expect(vault.connect(stranger).startRecovery(1)).to.be.revertedWithCustomError(vault, "NotAuthorized")
     await vault.connect(heir).startRecovery(1)
     await expect(vault.connect(stranger).unlockVault(1)).to.be.revertedWithCustomError(vault, "NotAuthorized")
+  })
+
+  it("requires the configured recovery approval threshold before unlock", async () => {
+    const { vault, owner, heir, lawyer, ownerClient } = await deployFixture()
+    const inputs = await encryptedInputs(ownerClient, heir.address)
+    const payload = "vault:v2:multi-sign-payload"
+    const vaultMetadata = metadata(payload)
+
+    await vault
+      .connect(owner)
+      .createVaultAdvanced(
+        "Two signer recovery",
+        [heir.address, lawyer.address],
+        [5000, 5000],
+        [],
+        [],
+        { inactivityPeriod: 0, gracePeriod: 0, approvalThreshold: 2 },
+        vaultMetadata,
+        inputs.releaseCode,
+        inputs.assetCount,
+        inputs.sealedBeneficiary,
+      )
+
+    await expect(vault.connect(heir).startRecovery(1))
+      .to.emit(vault, "RecoveryApproved")
+      .withArgs(1, heir.address, 1, 2)
+
+    await expect(vault.connect(heir).unlockVault(1)).to.be.revertedWithCustomError(vault, "UnlockNotReady")
+    await expect(vault.connect(lawyer).approveRecovery(1))
+      .to.emit(vault, "RecoveryApproved")
+      .withArgs(1, lawyer.address, 2, 2)
+    await vault.connect(heir).unlockVault(1)
+
+    const summary = await vault.getVault(1)
+    expect(summary.approvalThreshold).to.equal(2)
+    expect(summary.recoveryApprovals).to.equal(2)
+    expect(summary.externalPayloadCid).to.equal(vaultMetadata.externalPayloadCid)
+    expect(summary.notificationHash).to.equal(vaultMetadata.notificationHash)
+  })
+
+  it("lets the owner rotate an unreleased beneficiary wallet", async () => {
+    const { vault, owner, heir, lawyer, ownerClient } = await deployFixture()
+    const inputs = await encryptedInputs(ownerClient, heir.address)
+    const payload = "vault:v2:rotation-payload"
+    const payloadHash = hre.ethers.keccak256(hre.ethers.toUtf8Bytes(payload))
+
+    await vault
+      .connect(owner)
+      .createVault(
+        "Rotatable recovery",
+        [heir.address],
+        [10000],
+        0,
+        0,
+        payload,
+        payloadHash,
+        inputs.releaseCode,
+        inputs.assetCount,
+        inputs.sealedBeneficiary,
+      )
+
+    await expect(vault.connect(owner).rotateBeneficiary(1, heir.address, lawyer.address))
+      .to.emit(vault, "BeneficiaryRotated")
+      .withArgs(1, owner.address, heir.address, lawyer.address)
+
+    expect(await vault.isVaultBeneficiary(1, heir.address)).to.equal(false)
+    expect(await vault.isVaultBeneficiary(1, lawyer.address)).to.equal(true)
+    expect(await vault.getVaultsByBeneficiary(heir.address)).to.deep.equal([])
+    expect(await vault.getVaultsByBeneficiary(lawyer.address)).to.deep.equal([1n])
+
+    await expect(vault.connect(heir).startRecovery(1)).to.be.revertedWithCustomError(vault, "NotAuthorized")
+    await vault.connect(lawyer).startRecovery(1)
+    await vault.connect(lawyer).unlockVault(1)
+
+    expect((await vault.getVault(1)).unlocked).to.equal(true)
+  })
+
+  it("hides committed beneficiaries until they reveal their claim salt", async () => {
+    const { vault, owner, heir, stranger, ownerClient } = await deployFixture()
+    const inputs = await encryptedInputs(ownerClient, heir.address)
+    const payload = "vault:v2:hidden-beneficiary-payload"
+    const vaultMetadata = metadata(payload)
+    const salt = hre.ethers.keccak256(hre.ethers.toUtf8Bytes("heir-private-claim-code"))
+    const commitment = await vault.computeHiddenBeneficiaryCommitment(heir.address, salt)
+
+    await vault
+      .connect(owner)
+      .createVaultAdvanced(
+        "Hidden heir recovery",
+        [],
+        [],
+        [commitment],
+        [10000],
+        { inactivityPeriod: 0, gracePeriod: 0, approvalThreshold: 1 },
+        vaultMetadata,
+        inputs.releaseCode,
+        inputs.assetCount,
+        inputs.sealedBeneficiary,
+      )
+
+    const hiddenBeforeReveal = await vault.getBeneficiaries(1)
+    expect(hiddenBeforeReveal[0].wallet).to.equal(hre.ethers.ZeroAddress)
+    expect(await vault.getVaultsByBeneficiary(heir.address)).to.deep.equal([])
+
+    await expect(vault.connect(stranger).revealHiddenBeneficiary(1, salt)).to.be.revertedWithCustomError(vault, "NotAuthorized")
+    await expect(vault.connect(heir).revealHiddenBeneficiary(1, salt))
+      .to.emit(vault, "HiddenBeneficiaryRevealed")
+      .withArgs(1, heir.address, commitment)
+
+    const hiddenAfterReveal = await vault.getBeneficiaries(1)
+    expect(hiddenAfterReveal[0].wallet).to.equal(heir.address)
+    expect(await vault.getVaultsByBeneficiary(heir.address)).to.deep.equal([1n])
+
+    await vault.connect(heir).startRecovery(1)
+    await vault.connect(heir).unlockVault(1)
+
+    expect((await vault.getVault(1)).unlocked).to.equal(true)
+  })
+
+  it("rejects a hidden reveal that would duplicate an existing public beneficiary", async () => {
+    const { vault, owner, heir, ownerClient } = await deployFixture()
+    const inputs = await encryptedInputs(ownerClient, heir.address)
+    const payload = "vault:v2:duplicate-hidden-claim-payload"
+    const vaultMetadata = metadata(payload)
+    const salt = hre.ethers.keccak256(hre.ethers.toUtf8Bytes("duplicate-public-beneficiary-code"))
+    const commitment = await vault.computeHiddenBeneficiaryCommitment(heir.address, salt)
+
+    await vault
+      .connect(owner)
+      .createVaultAdvanced(
+        "Duplicate hidden claim",
+        [heir.address],
+        [5000],
+        [commitment],
+        [5000],
+        { inactivityPeriod: 0, gracePeriod: 0, approvalThreshold: 2 },
+        vaultMetadata,
+        inputs.releaseCode,
+        inputs.assetCount,
+        inputs.sealedBeneficiary,
+      )
+
+    await expect(vault.connect(heir).revealHiddenBeneficiary(1, salt)).to.be.revertedWithCustomError(
+      vault,
+      "InvalidBeneficiaries",
+    )
+    expect(await vault.isVaultBeneficiary(1, heir.address)).to.equal(true)
+    const beneficiaries = await vault.getBeneficiaries(1)
+    expect(beneficiaries[1].wallet).to.equal(hre.ethers.ZeroAddress)
+  })
+
+  it("lets the owner rotate an unrevealed hidden beneficiary commitment", async () => {
+    const { vault, owner, heir, lawyer, ownerClient } = await deployFixture()
+    const inputs = await encryptedInputs(ownerClient, heir.address)
+    const payload = "vault:v2:hidden-rotation-payload"
+    const vaultMetadata = metadata(payload)
+    const oldSalt = hre.ethers.keccak256(hre.ethers.toUtf8Bytes("old-hidden-claim-code"))
+    const newSalt = hre.ethers.keccak256(hre.ethers.toUtf8Bytes("new-hidden-claim-code"))
+    const oldCommitment = await vault.computeHiddenBeneficiaryCommitment(heir.address, oldSalt)
+    const newCommitment = await vault.computeHiddenBeneficiaryCommitment(lawyer.address, newSalt)
+
+    await vault
+      .connect(owner)
+      .createVaultAdvanced(
+        "Rotating hidden heir",
+        [],
+        [],
+        [oldCommitment],
+        [10000],
+        { inactivityPeriod: 0, gracePeriod: 0, approvalThreshold: 1 },
+        vaultMetadata,
+        inputs.releaseCode,
+        inputs.assetCount,
+        inputs.sealedBeneficiary,
+      )
+
+    await expect(vault.connect(owner).rotateHiddenBeneficiaryCommitment(1, oldCommitment, newCommitment))
+      .to.emit(vault, "HiddenBeneficiaryRotated")
+      .withArgs(1, owner.address, oldCommitment, newCommitment)
+
+    await expect(vault.connect(heir).revealHiddenBeneficiary(1, oldSalt)).to.be.revertedWithCustomError(
+      vault,
+      "NotAuthorized",
+    )
+    await vault.connect(lawyer).revealHiddenBeneficiary(1, newSalt)
+
+    const hiddenAfterReveal = await vault.getBeneficiaries(1)
+    expect(hiddenAfterReveal[0].wallet).to.equal(lawyer.address)
+    expect(await vault.getVaultsByBeneficiary(lawyer.address)).to.deep.equal([1n])
   })
 })

@@ -39,6 +39,9 @@ const config: HardhatUserConfig = {
     logMocks: false,
     gasWarning: false,
   },
+  sourcify: {
+    enabled: true,
+  },
 }
 
 export default config

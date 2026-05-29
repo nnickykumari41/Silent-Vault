@@ -66,6 +66,47 @@ export type InEaddressStructOutput = [
 ] & { ctHash: bigint; securityZone: bigint; utype: bigint; signature: string };
 
 export declare namespace SilentVault {
+  export type VaultPolicyInputStruct = {
+    inactivityPeriod: BigNumberish;
+    gracePeriod: BigNumberish;
+    approvalThreshold: BigNumberish;
+  };
+
+  export type VaultPolicyInputStructOutput = [
+    inactivityPeriod: bigint,
+    gracePeriod: bigint,
+    approvalThreshold: bigint
+  ] & {
+    inactivityPeriod: bigint;
+    gracePeriod: bigint;
+    approvalThreshold: bigint;
+  };
+
+  export type VaultMetadataInputStruct = {
+    encryptedPayload: string;
+    payloadHash: BytesLike;
+    externalPayloadCid: string;
+    externalPayloadHash: BytesLike;
+    notificationHash: BytesLike;
+    proofOfLifeHash: BytesLike;
+  };
+
+  export type VaultMetadataInputStructOutput = [
+    encryptedPayload: string,
+    payloadHash: string,
+    externalPayloadCid: string,
+    externalPayloadHash: string,
+    notificationHash: string,
+    proofOfLifeHash: string
+  ] & {
+    encryptedPayload: string;
+    payloadHash: string;
+    externalPayloadCid: string;
+    externalPayloadHash: string;
+    notificationHash: string;
+    proofOfLifeHash: string;
+  };
+
   export type BeneficiaryStruct = {
     wallet: AddressLike;
     shareBps: BigNumberish;
@@ -90,6 +131,13 @@ export declare namespace SilentVault {
     encryptedPayload: string;
     payloadHash: BytesLike;
     beneficiaryCount: BigNumberish;
+    approvalThreshold: BigNumberish;
+    recoveryApprovals: BigNumberish;
+    hiddenBeneficiaries: boolean;
+    externalPayloadCid: string;
+    externalPayloadHash: BytesLike;
+    notificationHash: BytesLike;
+    proofOfLifeHash: BytesLike;
   };
 
   export type VaultViewStructOutput = [
@@ -105,7 +153,14 @@ export declare namespace SilentVault {
     unlocked: boolean,
     encryptedPayload: string,
     payloadHash: string,
-    beneficiaryCount: bigint
+    beneficiaryCount: bigint,
+    approvalThreshold: bigint,
+    recoveryApprovals: bigint,
+    hiddenBeneficiaries: boolean,
+    externalPayloadCid: string,
+    externalPayloadHash: string,
+    notificationHash: string,
+    proofOfLifeHash: string
   ] & {
     id: bigint;
     owner: string;
@@ -120,6 +175,13 @@ export declare namespace SilentVault {
     encryptedPayload: string;
     payloadHash: string;
     beneficiaryCount: bigint;
+    approvalThreshold: bigint;
+    recoveryApprovals: bigint;
+    hiddenBeneficiaries: boolean;
+    externalPayloadCid: string;
+    externalPayloadHash: string;
+    notificationHash: string;
+    proofOfLifeHash: string;
   };
 }
 
@@ -128,30 +190,44 @@ export interface SilentVaultInterface extends Interface {
     nameOrSignature:
       | "BPS_DENOMINATOR"
       | "MAX_BENEFICIARIES"
+      | "approveRecovery"
       | "canUnlock"
       | "cancelRecovery"
       | "checkIn"
+      | "computeHiddenBeneficiaryCommitment"
       | "createVault"
+      | "createVaultAdvanced"
       | "getBeneficiaries"
       | "getEncryptedHandles"
+      | "getHiddenBeneficiaryCommitments"
       | "getVault"
       | "getVaultsByBeneficiary"
       | "getVaultsByOwner"
       | "grantUnlockedAccess"
+      | "hasApprovedRecovery"
       | "isRecoveryReady"
       | "isVaultBeneficiary"
+      | "revealHiddenBeneficiary"
+      | "rotateBeneficiary"
+      | "rotateHiddenBeneficiaryCommitment"
       | "startRecovery"
       | "triggerEmergency"
       | "unlockVault"
+      | "updateVaultMetadata"
       | "vaultCount"
   ): FunctionFragment;
 
   getEvent(
     nameOrSignatureOrTopic:
+      | "BeneficiaryRotated"
       | "CheckIn"
+      | "HiddenBeneficiaryRevealed"
+      | "HiddenBeneficiaryRotated"
+      | "RecoveryApproved"
       | "RecoveryCancelled"
       | "RecoveryStarted"
       | "VaultCreated"
+      | "VaultMetadataUpdated"
       | "VaultUnlocked"
   ): EventFragment;
 
@@ -164,6 +240,10 @@ export interface SilentVaultInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "approveRecovery",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "canUnlock",
     values: [BigNumberish]
   ): string;
@@ -174,6 +254,10 @@ export interface SilentVaultInterface extends Interface {
   encodeFunctionData(
     functionFragment: "checkIn",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "computeHiddenBeneficiaryCommitment",
+    values: [AddressLike, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "createVault",
@@ -191,11 +275,30 @@ export interface SilentVaultInterface extends Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "createVaultAdvanced",
+    values: [
+      string,
+      AddressLike[],
+      BigNumberish[],
+      BytesLike[],
+      BigNumberish[],
+      SilentVault.VaultPolicyInputStruct,
+      SilentVault.VaultMetadataInputStruct,
+      InEuint64Struct,
+      InEuint32Struct,
+      InEaddressStruct
+    ]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getBeneficiaries",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getEncryptedHandles",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getHiddenBeneficiaryCommitments",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -215,12 +318,28 @@ export interface SilentVaultInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "hasApprovedRecovery",
+    values: [BigNumberish, AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "isRecoveryReady",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "isVaultBeneficiary",
     values: [BigNumberish, AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revealHiddenBeneficiary",
+    values: [BigNumberish, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "rotateBeneficiary",
+    values: [BigNumberish, AddressLike, AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "rotateHiddenBeneficiaryCommitment",
+    values: [BigNumberish, BytesLike, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "startRecovery",
@@ -235,6 +354,18 @@ export interface SilentVaultInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "updateVaultMetadata",
+    values: [
+      BigNumberish,
+      string,
+      BytesLike,
+      string,
+      BytesLike,
+      BytesLike,
+      BytesLike
+    ]
+  ): string;
+  encodeFunctionData(
     functionFragment: "vaultCount",
     values?: undefined
   ): string;
@@ -247,6 +378,10 @@ export interface SilentVaultInterface extends Interface {
     functionFragment: "MAX_BENEFICIARIES",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "approveRecovery",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "canUnlock", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "cancelRecovery",
@@ -254,7 +389,15 @@ export interface SilentVaultInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "checkIn", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "computeHiddenBeneficiaryCommitment",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "createVault",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "createVaultAdvanced",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -263,6 +406,10 @@ export interface SilentVaultInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getEncryptedHandles",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getHiddenBeneficiaryCommitments",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getVault", data: BytesLike): Result;
@@ -279,11 +426,27 @@ export interface SilentVaultInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "hasApprovedRecovery",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "isRecoveryReady",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "isVaultBeneficiary",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "revealHiddenBeneficiary",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "rotateBeneficiary",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "rotateHiddenBeneficiaryCommitment",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -298,7 +461,36 @@ export interface SilentVaultInterface extends Interface {
     functionFragment: "unlockVault",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateVaultMetadata",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "vaultCount", data: BytesLike): Result;
+}
+
+export namespace BeneficiaryRotatedEvent {
+  export type InputTuple = [
+    vaultId: BigNumberish,
+    owner: AddressLike,
+    oldWallet: AddressLike,
+    newWallet: AddressLike
+  ];
+  export type OutputTuple = [
+    vaultId: bigint,
+    owner: string,
+    oldWallet: string,
+    newWallet: string
+  ];
+  export interface OutputObject {
+    vaultId: bigint;
+    owner: string;
+    oldWallet: string;
+    newWallet: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
 
 export namespace CheckInEvent {
@@ -312,6 +504,78 @@ export namespace CheckInEvent {
     vaultId: bigint;
     owner: string;
     timestamp: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace HiddenBeneficiaryRevealedEvent {
+  export type InputTuple = [
+    vaultId: BigNumberish,
+    beneficiary: AddressLike,
+    commitment: BytesLike
+  ];
+  export type OutputTuple = [
+    vaultId: bigint,
+    beneficiary: string,
+    commitment: string
+  ];
+  export interface OutputObject {
+    vaultId: bigint;
+    beneficiary: string;
+    commitment: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace HiddenBeneficiaryRotatedEvent {
+  export type InputTuple = [
+    vaultId: BigNumberish,
+    owner: AddressLike,
+    oldCommitment: BytesLike,
+    newCommitment: BytesLike
+  ];
+  export type OutputTuple = [
+    vaultId: bigint,
+    owner: string,
+    oldCommitment: string,
+    newCommitment: string
+  ];
+  export interface OutputObject {
+    vaultId: bigint;
+    owner: string;
+    oldCommitment: string;
+    newCommitment: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace RecoveryApprovedEvent {
+  export type InputTuple = [
+    vaultId: BigNumberish,
+    actor: AddressLike,
+    approvals: BigNumberish,
+    threshold: BigNumberish
+  ];
+  export type OutputTuple = [
+    vaultId: bigint,
+    actor: string,
+    approvals: bigint,
+    threshold: bigint
+  ];
+  export interface OutputObject {
+    vaultId: bigint;
+    actor: string;
+    approvals: bigint;
+    threshold: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -379,6 +643,34 @@ export namespace VaultCreatedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
+export namespace VaultMetadataUpdatedEvent {
+  export type InputTuple = [
+    vaultId: BigNumberish,
+    payloadHash: BytesLike,
+    externalPayloadHash: BytesLike,
+    notificationHash: BytesLike,
+    proofOfLifeHash: BytesLike
+  ];
+  export type OutputTuple = [
+    vaultId: bigint,
+    payloadHash: string,
+    externalPayloadHash: string,
+    notificationHash: string,
+    proofOfLifeHash: string
+  ];
+  export interface OutputObject {
+    vaultId: bigint;
+    payloadHash: string;
+    externalPayloadHash: string;
+    notificationHash: string;
+    proofOfLifeHash: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
 export namespace VaultUnlockedEvent {
   export type InputTuple = [vaultId: BigNumberish, actor: AddressLike];
   export type OutputTuple = [vaultId: bigint, actor: string];
@@ -439,6 +731,12 @@ export interface SilentVault extends BaseContract {
 
   MAX_BENEFICIARIES: TypedContractMethod<[], [bigint], "view">;
 
+  approveRecovery: TypedContractMethod<
+    [vaultId: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
   canUnlock: TypedContractMethod<[vaultId: BigNumberish], [boolean], "view">;
 
   cancelRecovery: TypedContractMethod<
@@ -449,6 +747,12 @@ export interface SilentVault extends BaseContract {
 
   checkIn: TypedContractMethod<[vaultId: BigNumberish], [void], "nonpayable">;
 
+  computeHiddenBeneficiaryCommitment: TypedContractMethod<
+    [wallet: AddressLike, salt: BytesLike],
+    [string],
+    "view"
+  >;
+
   createVault: TypedContractMethod<
     [
       label: string,
@@ -458,6 +762,23 @@ export interface SilentVault extends BaseContract {
       gracePeriod: BigNumberish,
       encryptedPayload: string,
       payloadHash: BytesLike,
+      releaseCodeInput: InEuint64Struct,
+      assetCountInput: InEuint32Struct,
+      primaryBeneficiaryInput: InEaddressStruct
+    ],
+    [bigint],
+    "nonpayable"
+  >;
+
+  createVaultAdvanced: TypedContractMethod<
+    [
+      label: string,
+      beneficiaryWallets: AddressLike[],
+      sharesBps: BigNumberish[],
+      hiddenBeneficiaryCommitments: BytesLike[],
+      hiddenSharesBps: BigNumberish[],
+      policy: SilentVault.VaultPolicyInputStruct,
+      metadata: SilentVault.VaultMetadataInputStruct,
       releaseCodeInput: InEuint64Struct,
       assetCountInput: InEuint32Struct,
       primaryBeneficiaryInput: InEaddressStruct
@@ -481,6 +802,12 @@ export interface SilentVault extends BaseContract {
         primaryBeneficiary: string;
       }
     ],
+    "view"
+  >;
+
+  getHiddenBeneficiaryCommitments: TypedContractMethod<
+    [vaultId: BigNumberish],
+    [string[]],
     "view"
   >;
 
@@ -508,6 +835,12 @@ export interface SilentVault extends BaseContract {
     "nonpayable"
   >;
 
+  hasApprovedRecovery: TypedContractMethod<
+    [arg0: BigNumberish, arg1: AddressLike],
+    [boolean],
+    "view"
+  >;
+
   isRecoveryReady: TypedContractMethod<
     [vaultId: BigNumberish],
     [boolean],
@@ -518,6 +851,24 @@ export interface SilentVault extends BaseContract {
     [arg0: BigNumberish, arg1: AddressLike],
     [boolean],
     "view"
+  >;
+
+  revealHiddenBeneficiary: TypedContractMethod<
+    [vaultId: BigNumberish, salt: BytesLike],
+    [void],
+    "nonpayable"
+  >;
+
+  rotateBeneficiary: TypedContractMethod<
+    [vaultId: BigNumberish, oldWallet: AddressLike, newWallet: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  rotateHiddenBeneficiaryCommitment: TypedContractMethod<
+    [vaultId: BigNumberish, oldCommitment: BytesLike, newCommitment: BytesLike],
+    [void],
+    "nonpayable"
   >;
 
   startRecovery: TypedContractMethod<
@@ -538,6 +889,20 @@ export interface SilentVault extends BaseContract {
     "nonpayable"
   >;
 
+  updateVaultMetadata: TypedContractMethod<
+    [
+      vaultId: BigNumberish,
+      encryptedPayload: string,
+      payloadHash: BytesLike,
+      externalPayloadCid: string,
+      externalPayloadHash: BytesLike,
+      notificationHash: BytesLike,
+      proofOfLifeHash: BytesLike
+    ],
+    [void],
+    "nonpayable"
+  >;
+
   vaultCount: TypedContractMethod<[], [bigint], "view">;
 
   getFunction<T extends ContractMethod = ContractMethod>(
@@ -551,6 +916,9 @@ export interface SilentVault extends BaseContract {
     nameOrSignature: "MAX_BENEFICIARIES"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
+    nameOrSignature: "approveRecovery"
+  ): TypedContractMethod<[vaultId: BigNumberish], [void], "nonpayable">;
+  getFunction(
     nameOrSignature: "canUnlock"
   ): TypedContractMethod<[vaultId: BigNumberish], [boolean], "view">;
   getFunction(
@@ -559,6 +927,13 @@ export interface SilentVault extends BaseContract {
   getFunction(
     nameOrSignature: "checkIn"
   ): TypedContractMethod<[vaultId: BigNumberish], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "computeHiddenBeneficiaryCommitment"
+  ): TypedContractMethod<
+    [wallet: AddressLike, salt: BytesLike],
+    [string],
+    "view"
+  >;
   getFunction(
     nameOrSignature: "createVault"
   ): TypedContractMethod<
@@ -570,6 +945,24 @@ export interface SilentVault extends BaseContract {
       gracePeriod: BigNumberish,
       encryptedPayload: string,
       payloadHash: BytesLike,
+      releaseCodeInput: InEuint64Struct,
+      assetCountInput: InEuint32Struct,
+      primaryBeneficiaryInput: InEaddressStruct
+    ],
+    [bigint],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "createVaultAdvanced"
+  ): TypedContractMethod<
+    [
+      label: string,
+      beneficiaryWallets: AddressLike[],
+      sharesBps: BigNumberish[],
+      hiddenBeneficiaryCommitments: BytesLike[],
+      hiddenSharesBps: BigNumberish[],
+      policy: SilentVault.VaultPolicyInputStruct,
+      metadata: SilentVault.VaultMetadataInputStruct,
       releaseCodeInput: InEuint64Struct,
       assetCountInput: InEuint32Struct,
       primaryBeneficiaryInput: InEaddressStruct
@@ -598,6 +991,9 @@ export interface SilentVault extends BaseContract {
     "view"
   >;
   getFunction(
+    nameOrSignature: "getHiddenBeneficiaryCommitments"
+  ): TypedContractMethod<[vaultId: BigNumberish], [string[]], "view">;
+  getFunction(
     nameOrSignature: "getVault"
   ): TypedContractMethod<
     [vaultId: BigNumberish],
@@ -614,6 +1010,13 @@ export interface SilentVault extends BaseContract {
     nameOrSignature: "grantUnlockedAccess"
   ): TypedContractMethod<[vaultId: BigNumberish], [void], "nonpayable">;
   getFunction(
+    nameOrSignature: "hasApprovedRecovery"
+  ): TypedContractMethod<
+    [arg0: BigNumberish, arg1: AddressLike],
+    [boolean],
+    "view"
+  >;
+  getFunction(
     nameOrSignature: "isRecoveryReady"
   ): TypedContractMethod<[vaultId: BigNumberish], [boolean], "view">;
   getFunction(
@@ -622,6 +1025,27 @@ export interface SilentVault extends BaseContract {
     [arg0: BigNumberish, arg1: AddressLike],
     [boolean],
     "view"
+  >;
+  getFunction(
+    nameOrSignature: "revealHiddenBeneficiary"
+  ): TypedContractMethod<
+    [vaultId: BigNumberish, salt: BytesLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "rotateBeneficiary"
+  ): TypedContractMethod<
+    [vaultId: BigNumberish, oldWallet: AddressLike, newWallet: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "rotateHiddenBeneficiaryCommitment"
+  ): TypedContractMethod<
+    [vaultId: BigNumberish, oldCommitment: BytesLike, newCommitment: BytesLike],
+    [void],
+    "nonpayable"
   >;
   getFunction(
     nameOrSignature: "startRecovery"
@@ -633,15 +1057,58 @@ export interface SilentVault extends BaseContract {
     nameOrSignature: "unlockVault"
   ): TypedContractMethod<[vaultId: BigNumberish], [void], "nonpayable">;
   getFunction(
+    nameOrSignature: "updateVaultMetadata"
+  ): TypedContractMethod<
+    [
+      vaultId: BigNumberish,
+      encryptedPayload: string,
+      payloadHash: BytesLike,
+      externalPayloadCid: string,
+      externalPayloadHash: BytesLike,
+      notificationHash: BytesLike,
+      proofOfLifeHash: BytesLike
+    ],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
     nameOrSignature: "vaultCount"
   ): TypedContractMethod<[], [bigint], "view">;
 
+  getEvent(
+    key: "BeneficiaryRotated"
+  ): TypedContractEvent<
+    BeneficiaryRotatedEvent.InputTuple,
+    BeneficiaryRotatedEvent.OutputTuple,
+    BeneficiaryRotatedEvent.OutputObject
+  >;
   getEvent(
     key: "CheckIn"
   ): TypedContractEvent<
     CheckInEvent.InputTuple,
     CheckInEvent.OutputTuple,
     CheckInEvent.OutputObject
+  >;
+  getEvent(
+    key: "HiddenBeneficiaryRevealed"
+  ): TypedContractEvent<
+    HiddenBeneficiaryRevealedEvent.InputTuple,
+    HiddenBeneficiaryRevealedEvent.OutputTuple,
+    HiddenBeneficiaryRevealedEvent.OutputObject
+  >;
+  getEvent(
+    key: "HiddenBeneficiaryRotated"
+  ): TypedContractEvent<
+    HiddenBeneficiaryRotatedEvent.InputTuple,
+    HiddenBeneficiaryRotatedEvent.OutputTuple,
+    HiddenBeneficiaryRotatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RecoveryApproved"
+  ): TypedContractEvent<
+    RecoveryApprovedEvent.InputTuple,
+    RecoveryApprovedEvent.OutputTuple,
+    RecoveryApprovedEvent.OutputObject
   >;
   getEvent(
     key: "RecoveryCancelled"
@@ -665,6 +1132,13 @@ export interface SilentVault extends BaseContract {
     VaultCreatedEvent.OutputObject
   >;
   getEvent(
+    key: "VaultMetadataUpdated"
+  ): TypedContractEvent<
+    VaultMetadataUpdatedEvent.InputTuple,
+    VaultMetadataUpdatedEvent.OutputTuple,
+    VaultMetadataUpdatedEvent.OutputObject
+  >;
+  getEvent(
     key: "VaultUnlocked"
   ): TypedContractEvent<
     VaultUnlockedEvent.InputTuple,
@@ -673,6 +1147,17 @@ export interface SilentVault extends BaseContract {
   >;
 
   filters: {
+    "BeneficiaryRotated(uint256,address,address,address)": TypedContractEvent<
+      BeneficiaryRotatedEvent.InputTuple,
+      BeneficiaryRotatedEvent.OutputTuple,
+      BeneficiaryRotatedEvent.OutputObject
+    >;
+    BeneficiaryRotated: TypedContractEvent<
+      BeneficiaryRotatedEvent.InputTuple,
+      BeneficiaryRotatedEvent.OutputTuple,
+      BeneficiaryRotatedEvent.OutputObject
+    >;
+
     "CheckIn(uint256,address,uint64)": TypedContractEvent<
       CheckInEvent.InputTuple,
       CheckInEvent.OutputTuple,
@@ -682,6 +1167,39 @@ export interface SilentVault extends BaseContract {
       CheckInEvent.InputTuple,
       CheckInEvent.OutputTuple,
       CheckInEvent.OutputObject
+    >;
+
+    "HiddenBeneficiaryRevealed(uint256,address,bytes32)": TypedContractEvent<
+      HiddenBeneficiaryRevealedEvent.InputTuple,
+      HiddenBeneficiaryRevealedEvent.OutputTuple,
+      HiddenBeneficiaryRevealedEvent.OutputObject
+    >;
+    HiddenBeneficiaryRevealed: TypedContractEvent<
+      HiddenBeneficiaryRevealedEvent.InputTuple,
+      HiddenBeneficiaryRevealedEvent.OutputTuple,
+      HiddenBeneficiaryRevealedEvent.OutputObject
+    >;
+
+    "HiddenBeneficiaryRotated(uint256,address,bytes32,bytes32)": TypedContractEvent<
+      HiddenBeneficiaryRotatedEvent.InputTuple,
+      HiddenBeneficiaryRotatedEvent.OutputTuple,
+      HiddenBeneficiaryRotatedEvent.OutputObject
+    >;
+    HiddenBeneficiaryRotated: TypedContractEvent<
+      HiddenBeneficiaryRotatedEvent.InputTuple,
+      HiddenBeneficiaryRotatedEvent.OutputTuple,
+      HiddenBeneficiaryRotatedEvent.OutputObject
+    >;
+
+    "RecoveryApproved(uint256,address,uint8,uint8)": TypedContractEvent<
+      RecoveryApprovedEvent.InputTuple,
+      RecoveryApprovedEvent.OutputTuple,
+      RecoveryApprovedEvent.OutputObject
+    >;
+    RecoveryApproved: TypedContractEvent<
+      RecoveryApprovedEvent.InputTuple,
+      RecoveryApprovedEvent.OutputTuple,
+      RecoveryApprovedEvent.OutputObject
     >;
 
     "RecoveryCancelled(uint256,address)": TypedContractEvent<
@@ -715,6 +1233,17 @@ export interface SilentVault extends BaseContract {
       VaultCreatedEvent.InputTuple,
       VaultCreatedEvent.OutputTuple,
       VaultCreatedEvent.OutputObject
+    >;
+
+    "VaultMetadataUpdated(uint256,bytes32,bytes32,bytes32,bytes32)": TypedContractEvent<
+      VaultMetadataUpdatedEvent.InputTuple,
+      VaultMetadataUpdatedEvent.OutputTuple,
+      VaultMetadataUpdatedEvent.OutputObject
+    >;
+    VaultMetadataUpdated: TypedContractEvent<
+      VaultMetadataUpdatedEvent.InputTuple,
+      VaultMetadataUpdatedEvent.OutputTuple,
+      VaultMetadataUpdatedEvent.OutputObject
     >;
 
     "VaultUnlocked(uint256,address)": TypedContractEvent<
