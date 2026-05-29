@@ -292,8 +292,8 @@ export function SilentVaultDashboard({ activeView = "overview" }: { activeView?:
   const [decrypted, setDecrypted] = useState<Record<string, DecryptedVault>>({})
   const [wave5Ready, setWave5Ready] = useState(true)
   const [isBusy, setIsBusy] = useState(false)
-  const [status, setStatus] = useState("Connect a wallet to create or manage a private recovery vault.")
-  const [lastTx, setLastTx] = useState<string>()
+  const [, setStatus] = useState("Connect a wallet to create or manage a private recovery vault.")
+  const [, setLastTx] = useState<string>()
   const [label, setLabel] = useState("Family recovery vault")
   const [assetCount, setAssetCount] = useState(7)
   const [timerIndex, setTimerIndex] = useState(0)
@@ -1418,29 +1418,10 @@ export function SilentVaultDashboard({ activeView = "overview" }: { activeView?:
               </div>
             )}
 
-            {activeView === "roadmap" && (
-              <div className="space-y-5 p-3 md:p-5">
-                <div className="border-b border-zinc-100 pb-5">
-                  <h2 className="font-serif text-3xl font-normal">Roadmap</h2>
-                  <p className="mt-1 text-sm text-zinc-500">Finished MVP surface plus production extensions.</p>
-                </div>
-                <Roadmap />
-              </div>
-            )}
           </div>
         </div>
       </section>
     </main>
-  )
-}
-
-function Metric({ icon: Icon, label, value }: { icon: any; label: string; value: string }) {
-  return (
-    <div className="py-2">
-      <Icon className="mb-4 h-5 w-5 text-zinc-500" />
-      <p className="text-2xl font-semibold tracking-tight">{value}</p>
-      <p className="mt-1 text-xs uppercase tracking-[0.18em] text-zinc-500">{label}</p>
-    </div>
   )
 }
 
@@ -1852,37 +1833,6 @@ function EventTimeline({ events, onRefresh }: { events: VaultEventRecord[]; onRe
           ))}
         </div>
       )}
-    </div>
-  )
-}
-
-function Roadmap() {
-  const items = [
-    ["Done", "CoFHE contract", "Encrypted release secret, private asset count, hidden primary beneficiary, ACL unlock."],
-    ["Done", "Multi-approval recovery", "Optional M-of-N beneficiary approval before non-emergency unlock."],
-    ["Done", "Beneficiary rotation", "Owner can replace an unreleased beneficiary wallet and reset pending approvals."],
-    ["Done", "Hidden beneficiaries", "Commitment-based beneficiary slots stay unrevealed until claim salt reveal."],
-    ["Done", "Large-file anchors", "Lighthouse/IPFS CID and SHA-256 file hash can be anchored with the encrypted vault."],
-    ["Done", "Event timeline", "Contract logs are indexed and cached in the browser for faster dashboard context."],
-  ]
-
-  return (
-    <div className="space-y-3">
-      {items.map(([status, title, body]) => (
-        <div key={title} className="grid gap-3 rounded-[24px] border border-zinc-200 bg-[#fbfbfa] p-4 md:grid-cols-[86px_1fr]">
-          <span
-            className={`h-fit rounded-full px-3 py-1 text-center text-xs font-medium ${
-              status === "Done" ? "bg-emerald-50 text-emerald-700" : "bg-zinc-100 text-zinc-600"
-            }`}
-          >
-            {status}
-          </span>
-          <div>
-            <p className="font-medium text-zinc-950">{title}</p>
-            <p className="mt-1 text-sm leading-6 text-zinc-600">{body}</p>
-          </div>
-        </div>
-      ))}
     </div>
   )
 }
