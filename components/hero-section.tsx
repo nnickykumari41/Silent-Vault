@@ -1,6 +1,5 @@
 "use client"
 import { useEffect, useState } from "react"
-import { ArrowRight, ArrowUpRight } from "lucide-react"
 import { AnimatedText } from "./animated-text"
 
 export function HeroSection() {
@@ -92,21 +91,6 @@ export function HeroSection() {
               <AnimatedText text="Your crypto should not disappear with you" delay={0.3} />
             </h1>
           </div>
-        </div>
-
-        <div className="flex flex-col items-center justify-center">
-          <a
-            href="/dashboard"
-            className={`relative flex items-center gap-0 bg-white text-black rounded-full pl-6 pr-1.5 py-1.5 transition-all duration-[1500ms] ease-out delay-500 group overflow-hidden hover:bg-white/95 ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            }`}
-          >
-            <span className="text-sm pr-4">Open vault dashboard</span>
-            <span className="relative flex h-10 w-10 items-center justify-center rounded-full bg-black text-white">
-              <ArrowRight className="absolute h-4 w-4 transition-opacity group-hover:opacity-0" />
-              <ArrowUpRight className="h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100" />
-            </span>
-          </a>
         </div>
       </div>
     </section>
