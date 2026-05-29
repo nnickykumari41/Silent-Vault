@@ -1113,7 +1113,7 @@ export function SilentVaultDashboard({ activeView = "overview" }: { activeView?:
               </div>
             )}
 
-            <div className="grid gap-2 p-1 sm:grid-cols-3">
+            <div className="mx-1 mb-3 grid w-full grid-cols-3 gap-1 rounded-2xl border border-zinc-200 bg-[#f8f8f6] p-1 sm:inline-flex sm:w-fit sm:rounded-full">
               {[
                 ["overview", "Dashboard", "/dashboard"],
                 ["create", "Create vault", "/dashboard/create"],
@@ -1122,8 +1122,9 @@ export function SilentVaultDashboard({ activeView = "overview" }: { activeView?:
                 <Link
                   key={id}
                   href={href}
-                  className={`rounded-full px-4 py-3 text-sm transition ${
-                    activeView === id ? "bg-zinc-950 text-white" : "text-zinc-600 hover:bg-zinc-100"
+                  aria-current={activeView === id ? "page" : undefined}
+                  className={`inline-flex min-h-10 items-center justify-center whitespace-nowrap rounded-xl px-2 text-xs font-medium transition sm:rounded-full sm:px-5 sm:text-sm ${
+                    activeView === id ? "bg-zinc-950 text-white shadow-sm" : "text-zinc-600 hover:bg-white hover:text-zinc-950"
                   }`}
                 >
                   {title}
