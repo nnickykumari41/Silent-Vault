@@ -6,7 +6,7 @@ The main idea is simple: your recovery instructions, private asset notes, releas
 
 Live app: https://silentvault-recovery.vercel.app
 
-Production alias: `silentvault-recovery.vercel.app`
+ alias: `silentvault-recovery.vercel.app`
 
 Sepolia contract: `0xa472cF48636bDB9C5B0cBA550eA368d71f7C35cD`
 
@@ -79,7 +79,7 @@ Implemented:
 - Local browser decryption after unlock.
 - Hardhat tests for the core contract flow.
 - Sepolia smoke script that creates, unlocks, and decrypts a real test vault.
-- Production deployment on Vercel with the clean public alias `silentvault-recovery.vercel.app`.
+-  deployment on Vercel with the clean public alias `silentvault-recovery.vercel.app`.
 - Cleaned landing page that preserves the template hero animation while removing the old phone mockup dependency.
 - Removed unused property/demo carousel sections from the homepage.
 - Simplified dashboard intro copy and wallet status area.
@@ -150,23 +150,23 @@ npm run smoke:sepolia
 
 The smoke test creates a real vault on Sepolia, starts recovery, unlocks it, grants access, and decrypts the CoFHE handles.
 
-## Wave 5 - Production Readiness
+## Wave 5 -   Readiness
 
-Wave 5 turns SilentVault from an MVP into a fuller production candidate.
+Wave 5 turns SilentVault from an MVP into a fuller   candidate.
 
 - Multi-sign recovery: vault creators can require M-of-N beneficiary approvals before non-emergency unlock.
 - Beneficiary rotation: owners can replace unreleased beneficiary wallets; pending approvals are reset.
-- Hidden beneficiaries: owners can create salted commitment slots, rotate unrevealed commitments, and beneficiaries reveal only when they submit their claim salt.
+- Hidden beneficiaries: owners can create salted commitment slots. Beneficiaries reveal only when they submit their claim salt.
 - Larger private files: the create flow anchors an encrypted file CID and SHA-256 hash while keeping large documents off-chain.
 - Notification relays: the vault stores a private notification config hash, and `/api/notifications` can relay email, Telegram, and webhook alerts when server credentials are configured.
 - Event indexer: the dashboard indexes contract events into browser cache, and `npm run index:events` can produce a deployment event cache.
 - Proof-of-life options: a proof-of-life plan hash is anchored with the vault metadata.
 - Legal and safety UX: the create flow includes recovery package templates and safer seed-phrase handling guidance.
-- Mainnet readiness: `DEPLOYMENT.md` documents the CoFHE-supported deployment matrix and preview/production env setup.
+- Mainnet readiness: `DEPLOYMENT.md` documents the CoFHE-supported deployment matrix and preview env setup.
 - Security readiness: `SECURITY.md` documents the threat model and audit checklist.
 - CI/CD: `.github/workflows/ci.yml` runs compile, contract tests, lint, and build, with a manual Sepolia smoke-test job.
 
-## Product Direction
+##  Direction
 
 SilentVault can grow from a crypto inheritance dApp into a private digital legacy protocol. The long-term version could support family vaults, legal trustee workflows, DAO treasury succession, business continuity plans, private asset inventories, and encrypted personal messages that only unlock under well-defined conditions.
 
